@@ -1,12 +1,12 @@
 ﻿using System.Media;
 
-namespace WhoWantsToBeAMillionaire.App
+namespace WhoWantsToBeAMillionaire.App.Services
 {
     public class BackgroundSongService
     {
         private readonly SoundPlayer _soundPlayer;
 
-        private string BasePath
+        private static string BasePath
             => AppDomain.CurrentDomain.BaseDirectory + "\\BackgroundSongs\\{0}";
 
         public BackgroundSongService(SoundPlayer soundPlayer)
@@ -17,7 +17,7 @@ namespace WhoWantsToBeAMillionaire.App
             _soundPlayer.SoundLocation = string.Format(BasePath, "abertura.wav");
             _soundPlayer.PlayLooping();
         }
-        
+
         public void PlayThriller()
         {
             _soundPlayer.SoundLocation = string.Format(BasePath, "suspense.wav");

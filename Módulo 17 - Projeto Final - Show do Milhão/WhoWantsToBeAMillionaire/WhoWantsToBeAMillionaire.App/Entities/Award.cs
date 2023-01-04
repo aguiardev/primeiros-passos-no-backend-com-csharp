@@ -1,4 +1,4 @@
-﻿namespace WhoWantsToBeAMillionaire.App
+﻿namespace WhoWantsToBeAMillionaire.App.Entities
 {
     public class Award
     {

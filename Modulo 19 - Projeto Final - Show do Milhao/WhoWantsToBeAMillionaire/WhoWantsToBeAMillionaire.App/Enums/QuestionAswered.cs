@@ -1,4 +1,4 @@
-﻿namespace WhoWantsToBeAMillionaire.App.Events.Enums;
+﻿namespace WhoWantsToBeAMillionaire.App.Enums;
 
 public enum QuestionAswered
 {

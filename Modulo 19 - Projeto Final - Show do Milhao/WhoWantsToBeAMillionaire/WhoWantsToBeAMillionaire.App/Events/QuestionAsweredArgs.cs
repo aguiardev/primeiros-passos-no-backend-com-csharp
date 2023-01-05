@@ -1,5 +1,5 @@
 ﻿using WhoWantsToBeAMillionaire.App.Entities;
-using WhoWantsToBeAMillionaire.App.Events.Enums;
+using WhoWantsToBeAMillionaire.App.Enums;
 
 namespace WhoWantsToBeAMillionaire.App.Events;
 

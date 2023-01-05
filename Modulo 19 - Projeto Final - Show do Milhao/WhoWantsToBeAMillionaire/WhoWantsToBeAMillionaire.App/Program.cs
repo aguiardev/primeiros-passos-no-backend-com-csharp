@@ -5,7 +5,7 @@ using System.Media;
 using WhoWantsToBeAMillionaire.App;
 using WhoWantsToBeAMillionaire.App.Entities;
 using WhoWantsToBeAMillionaire.App.Events;
-using WhoWantsToBeAMillionaire.App.Events.Enums;
+using WhoWantsToBeAMillionaire.App.Enums;
 using WhoWantsToBeAMillionaire.App.Services;
 
 var backgroundSongService = new BackgroundSongService(new SoundPlayer());
@@ -47,8 +47,11 @@ void OnNextQuestion(object sender, NextQuestionArgs args)
 {
     Console.Clear();
 
-    backgroundSongService.PlayQuestionSelection();
-    backgroundSongService.PlayThriller();
+    if (!args.CallHelp)
+    {
+        backgroundSongService.PlayQuestionSelection();
+        backgroundSongService.PlayThriller();
+    }
 
     PrintHeader(args);
     PrintQuestion(args.Question);
@@ -58,14 +61,15 @@ void OnNextQuestion(object sender, NextQuestionArgs args)
     while (true)
     {
         optionSelected = Console.ReadLine() ?? string.Empty;
-        if (GameService.IsValidOption(optionSelected))
+        if (game.IsValidOption(
+            optionSelected, args.CallHelp, out var message))
         {
             game.OptionSelected = optionSelected;
             break;
         }
 
         Console.Clear();
-        Console.WriteLine("Opção inválida! Tente novamente.");
+        Console.WriteLine(message);
         Console.WriteLine();
 
         PrintHeader(args);
@@ -108,12 +112,12 @@ void PrintMenu()
 
 void PrintQuestion(Question question)
 {
-    Console.WriteLine($"Pergunta: {question.Description}");
+    Console.WriteLine($"Pergunta {question.Number}: {question.Description}");
     Console.WriteLine();
 
     foreach (var option in question.Options)
     {
-        Console.WriteLine($"{option.Alias}) {option.Description}");
+        Console.WriteLine($"{option.Number}) {option.Description}");
     }
 
     Console.WriteLine();
@@ -187,39 +191,33 @@ List<Question> LoadQuestions(int questionCount)
 {
     var question = new List<Question>()
     {
-        new Question()
-        {
-            Description = "Qual a capital da China?",
-            Options = new List<Option>()
+        new Question(
+            "Qual a capital da China?",
+            new List<Option>()
             {
-                new Option("1", "Kyoto"),
-                new Option("2", "Pequim", true),
-                new Option("3", "Taiwan"),
-                new Option("4", "Brasilia")
-            }
-        },
-        new Question()
-        {
-            Description = "Qual o nome do terceiro planeta do sistema solar?",
-            Options = new List<Option>()
+                new Option(1, "Kyoto"),
+                new Option(2, "Pequim", true),
+                new Option(3, "Taiwan"),
+                new Option(4, "Brasilia")
+            }),
+        new Question(
+            "Qual o nome do terceiro planeta do sistema solar?",
+            new List<Option>()
             {
-                new Option("1", "Marte"),
-                new Option("2", "Plutão"),
-                new Option("3", "Terra", true),
-                new Option("4", "Mercúrio")
-            }
-        },
-        new Question()
-        {
-            Description = "Qual o ponto mais alto do Brasil?",
-            Options = new List<Option>()
+                new Option(1, "Marte"),
+                new Option(2, "Plutão"),
+                new Option(3, "Terra", true),
+                new Option(4, "Mercúrio")
+            }),
+        new Question(
+            "Qual o ponto mais alto do Brasil?",
+            new List<Option>()
             {
-                new Option("1", "Pico da Bandeira"),
-                new Option("2", "Pico do Calçado"),
-                new Option("3", "Pico 31 de Março"),
-                new Option("4", "Pico da Neblina", true)
-            }
-        }
+                new Option(1, "Pico da Bandeira"),
+                new Option(2, "Pico do Calçado"),
+                new Option(3, "Pico 31 de Março"),
+                new Option(4, "Pico da Neblina", true)
+            })
     };
 
     return question.Take(questionCount).ToList();

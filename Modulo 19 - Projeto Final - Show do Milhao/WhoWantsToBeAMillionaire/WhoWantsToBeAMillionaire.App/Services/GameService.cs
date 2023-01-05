@@ -1,6 +1,7 @@
 ﻿using WhoWantsToBeAMillionaire.App.Entities;
 using WhoWantsToBeAMillionaire.App.Events;
 using WhoWantsToBeAMillionaire.App.Enums;
+using System.Collections.Generic;
 
 namespace WhoWantsToBeAMillionaire.App.Services;
 
@@ -12,8 +13,12 @@ public class GameService
 {
     private bool _callHelp;
     private bool _callSkip;
-    private bool _callStop;
-    private string _optionSelected;
+    private List<Question> _selectedQuestions;
+
+    /// <summary>
+    /// Count Selected Questions + Count Skipped Questions
+    /// </summary>
+    private readonly List<int> _exceptionQuestionsId;
     private readonly List<Award> _awards;
     private readonly List<Question> _questions;
 
@@ -31,7 +36,7 @@ public class GameService
     {
         _callHelp = false;
         _callSkip = false;
-        _callStop = false;
+        _exceptionQuestionsId = new List<int>();
         _questions = questions;
         _awards = awards;
         PlayerName = playerName;
@@ -135,6 +140,26 @@ public class GameService
         options.Remove(removedElement);
     }
 
+    private Question GetRandomQuestion() => GetRandomQuestion(1).First();
+
+    private List<Question> GetRandomQuestion(int count)
+    {
+        var availableQuestions = _questions
+            .Where(w => !_exceptionQuestionsId.Contains(w.Id)).ToList();
+
+        var question = new List<Question>();
+        var random = new Random();
+
+        for (int i = 0; i < count; i++)
+        {
+            var elementIndex = random.Next(0, availableQuestions.Count);
+
+            question.Add(availableQuestions[elementIndex]);
+        }
+
+        return question;
+    }
+
     public void UpdateCurrentAward(decimal currentAward) => CurrentAward = currentAward;
 
     public int GetQuestionCount() => _awards.Count;
@@ -145,20 +170,17 @@ public class GameService
 
         var questionNumber = 0;
 
-        foreach (var question in _questions)
+        _selectedQuestions = GetRandomQuestion(_awards.Count);
+        _exceptionQuestionsId.AddRange(_selectedQuestions.Select(s => s.Id));
+
+        foreach (var question in _selectedQuestions)
         {
             question.Number = ++questionNumber;
 
             var award = GetAward(questionNumber);
 
             OnNextQuestion?.Invoke(this, new NextQuestionArgs(
-                question,
-                PlayerName,
-                CurrentAward,
-                SkipCount,
-                false,
-                HelpCount,
-                award));
+                question, PlayerName, CurrentAward, SkipCount, false, HelpCount, award));
 
             if (_callHelp)
             {
@@ -166,23 +188,21 @@ public class GameService
                 ResetNumber(question.Options);
                 
                 OnNextQuestion?.Invoke(this, new NextQuestionArgs(
-                    question,
-                    PlayerName,
-                    CurrentAward,
-                    SkipCount,
-                    true,
-                    HelpCount,
-                    award));
+                    question, PlayerName, CurrentAward, SkipCount, true, HelpCount, award));
 
                 _callHelp = false;
             }
 
-            //if (_callSkip)
-            //{
+            if (_callSkip)
+            {
+                question.UpdateProps(GetRandomQuestion());
 
-            //    _callSkip = false;
-            //    break;
-            //}
+                OnNextQuestion?.Invoke(this, new NextQuestionArgs(
+                    question, PlayerName, CurrentAward, SkipCount, true, HelpCount, award));
+
+                _callSkip = false;
+                break;
+            }
 
             if (CanStop())
             {

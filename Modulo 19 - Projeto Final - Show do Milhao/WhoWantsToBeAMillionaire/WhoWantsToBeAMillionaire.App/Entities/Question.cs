@@ -7,9 +7,18 @@ public class Question
     public string Description { get; set; }
     public List<Option> Options { get; set; }
 
-    public Question(string description, List<Option> options)
+    public Question(int id, string description, List<Option> options)
     {
+        Id = id;
         Description = description;
         Options = options;
+    }
+
+    public void UpdateProps(Question question)
+    {
+        Id = question.Id;
+        Number = question.Number;
+        Description = question.Description;
+        Options = question.Options;
     }
 }

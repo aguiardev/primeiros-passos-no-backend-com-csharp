@@ -172,16 +172,11 @@ string GetPlayerName()
     {
         name = Console.ReadLine();
 
-        if (string.IsNullOrEmpty(name))
-        {
-            Console.Clear();
-            Console.Write("Nome inválido! Digite novamente: ");
-        }
-        else
-        {
-            Console.Clear();
+        Console.Clear();
+        if (!string.IsNullOrEmpty(name))
             break;
-        }
+
+        Console.Write("Nome inválido! Digite novamente: ");
     }
 
     return name;

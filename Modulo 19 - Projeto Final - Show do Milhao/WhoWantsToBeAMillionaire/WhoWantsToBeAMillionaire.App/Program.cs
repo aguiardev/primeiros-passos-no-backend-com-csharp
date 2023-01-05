@@ -46,7 +46,7 @@ void OnStarted(object sender, StartedArgs args)
 void OnNextQuestion(object sender, NextQuestionArgs args)
 {
     Console.Clear();
-
+    
     if (!args.CallHelp)
     {
         backgroundSongService.PlayQuestionSelection();

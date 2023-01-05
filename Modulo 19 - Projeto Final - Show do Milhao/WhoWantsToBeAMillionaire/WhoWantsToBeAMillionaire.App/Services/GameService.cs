@@ -162,8 +162,6 @@ public class GameService
 
     public void UpdateCurrentAward(decimal currentAward) => CurrentAward = currentAward;
 
-    public int GetQuestionCount() => _awards.Count;
-
     public void Start()
     {
         OnStarted?.Invoke(this, new StartedArgs(PlayerName));
@@ -198,7 +196,7 @@ public class GameService
                 question.UpdateProps(GetRandomQuestion());
 
                 OnNextQuestion?.Invoke(this, new NextQuestionArgs(
-                    question, PlayerName, CurrentAward, SkipCount, true, HelpCount, award));
+                    question, PlayerName, CurrentAward, SkipCount, false, HelpCount, award));
 
                 _callSkip = false;
                 break;

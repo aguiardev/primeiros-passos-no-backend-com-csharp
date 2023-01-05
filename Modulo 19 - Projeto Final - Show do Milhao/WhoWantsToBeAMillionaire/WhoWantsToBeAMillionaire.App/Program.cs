@@ -189,9 +189,10 @@ string GetPlayerName()
 
 List<Question> LoadQuestions(int questionCount)
 {
-    var question = new List<Question>()
+    return new List<Question>()
     {
         new Question(
+            1,
             "Qual a capital da China?",
             new List<Option>()
             {
@@ -201,6 +202,7 @@ List<Question> LoadQuestions(int questionCount)
                 new Option(4, "Brasilia")
             }),
         new Question(
+            2,
             "Qual o nome do terceiro planeta do sistema solar?",
             new List<Option>()
             {
@@ -210,6 +212,7 @@ List<Question> LoadQuestions(int questionCount)
                 new Option(4, "Mercúrio")
             }),
         new Question(
+            3,
             "Qual o ponto mais alto do Brasil?",
             new List<Option>()
             {
@@ -217,10 +220,18 @@ List<Question> LoadQuestions(int questionCount)
                 new Option(2, "Pico do Calçado"),
                 new Option(3, "Pico 31 de Março"),
                 new Option(4, "Pico da Neblina", true)
+            }),
+        new Question(
+            4,
+            "Qual o dia da independência nos EUA?",
+            new List<Option>()
+            {
+                new Option(1, "23 de Março"),
+                new Option(2, "4 de Julho", true),
+                new Option(3, "7 de Setembro"),
+                new Option(4, "15 de Novembro")
             })
     };
-
-    return question.Take(questionCount).ToList();
 }
 
 List<Award> LoadAwards()

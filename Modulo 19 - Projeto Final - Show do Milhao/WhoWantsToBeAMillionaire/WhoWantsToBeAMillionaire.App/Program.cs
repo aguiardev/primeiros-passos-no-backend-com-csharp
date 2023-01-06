@@ -16,11 +16,9 @@ PrintMenu();
 
 GetConfigValues(out int helpCount, out int skipCount);
 
-var awards = LoadAwards();
-
 var game = new GameService(
-    LoadQuestions(awards.Count),
-    awards,
+    LoadQuestions(),
+    LoadAwards(),
     GetPlayerName(),
     helpCount,
     skipCount);
@@ -57,6 +55,8 @@ void OnNextQuestion(object sender, NextQuestionArgs args)
     PrintQuestion(args.Question);
 
     var optionSelected = string.Empty;
+
+    // TODO: verificar possível bug que retorna pergunta repetida quando pulamos
 
     while (true)
     {
@@ -182,7 +182,7 @@ string GetPlayerName()
     return name;
 }
 
-List<Question> LoadQuestions(int questionCount)
+List<Question> LoadQuestions()
 {
     return new List<Question>()
     {

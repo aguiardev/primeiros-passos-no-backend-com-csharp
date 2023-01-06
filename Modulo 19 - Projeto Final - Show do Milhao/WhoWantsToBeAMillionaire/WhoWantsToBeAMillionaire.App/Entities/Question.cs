@@ -13,12 +13,4 @@ public class Question
         Description = description;
         Options = options;
     }
-
-    public void UpdateProps(Question question)
-    {
-        Id = question.Id;
-        Number = question.Number;
-        Description = question.Description;
-        Options = question.Options;
-    }
 }

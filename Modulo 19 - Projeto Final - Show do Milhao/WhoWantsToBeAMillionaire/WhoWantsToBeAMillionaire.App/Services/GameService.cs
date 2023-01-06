@@ -2,6 +2,7 @@
 using WhoWantsToBeAMillionaire.App.Events;
 using WhoWantsToBeAMillionaire.App.Enums;
 using System.Collections.Generic;
+using System;
 
 namespace WhoWantsToBeAMillionaire.App.Services;
 
@@ -9,16 +10,16 @@ public delegate void OnStartedHandler(object sender, StartedArgs args);
 public delegate void OnNextQuestionHandler(object sender, NextQuestionArgs args);
 public delegate void OnQuestionAsweredHandler(object sender, QuestionAsweredArgs args);
 
+// TODO: criar partial RandomService
 public class GameService
 {
+    private int _questionIndex;
+    private int _questionNumber;
     private bool _callHelp;
     private bool _callSkip;
-    private List<Question> _selectedQuestions;
+    private bool _callStop => string.Equals(
+        OptionSelected, Constants.STOP, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Count Selected Questions + Count Skipped Questions
-    /// </summary>
-    private readonly List<int> _exceptionQuestionsId;
     private readonly List<Award> _awards;
     private readonly List<Question> _questions;
 
@@ -34,9 +35,10 @@ public class GameService
 
     public GameService(List<Question> questions, List<Award> awards, string playerName, int helpCount, int skipCount)
     {
+        _questionIndex = 0;
+        _questionNumber = 1;
         _callHelp = false;
         _callSkip = false;
-        _exceptionQuestionsId = new List<int>();
         _questions = questions;
         _awards = awards;
         PlayerName = playerName;
@@ -44,9 +46,6 @@ public class GameService
         SkipCount = skipCount;
         OptionSelected = string.Empty;
     }
-
-    private bool CanStop() => string.Equals(
-        OptionSelected, Constants.STOP, StringComparison.OrdinalIgnoreCase);
 
     private bool CanHelp()
     {
@@ -68,9 +67,6 @@ public class GameService
         return true;
     }
 
-    public Award GetAward(int questionNumber)
-        => _awards.First(f => f.QuestionNumber == questionNumber);
-
     public bool IsValidOption(string optionAlias, bool callHelpBefore, out string message)
     {
         if (string.IsNullOrEmpty(optionAlias) &&
@@ -84,6 +80,7 @@ public class GameService
             return false;
         }
 
+        _callHelp = false;
         if (string.Equals(optionAlias, Constants.HELP, StringComparison.OrdinalIgnoreCase))
         {
             if (callHelpBefore)
@@ -97,11 +94,12 @@ public class GameService
                 message = "Você não pode mais pedir ajuda!";
                 return false;
             }
-             
+
             message = string.Empty;
             return true;
         }
 
+        _callSkip = false;
         if (string.Equals(optionAlias, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
         {
             if (!CanSkip())
@@ -109,7 +107,7 @@ public class GameService
                 message = "Você não pode mais pular!";
                 return false;
             }
-            
+
             message = string.Empty;
             return true;
         }
@@ -121,7 +119,7 @@ public class GameService
     private bool IsCorrect(Question question, int optionAlias)
         => question.Options.Any(w => w.IsCorrect && w.Number == optionAlias);
 
-    private void ResetNumber(List<Option> options)
+    private void ResetOptionNumbers(List<Option> options)
     {
         for (int i = 0; i < options.Count; i++)
         {
@@ -140,24 +138,53 @@ public class GameService
         options.Remove(removedElement);
     }
 
-    private Question GetRandomQuestion() => GetRandomQuestion(1).First();
-
-    private List<Question> GetRandomQuestion(int count)
+    private List<Question> GetRandomQuestions()
     {
-        var availableQuestions = _questions
-            .Where(w => !_exceptionQuestionsId.Contains(w.Id)).ToList();
+        //TODO: esse método deve embaralhar as questões
 
-        var question = new List<Question>();
-        var random = new Random();
+        //var availableQuestions = _questions
+        //    .Where(w => !_exceptionQuestionsId.Contains(w.Id)).ToList();
 
-        for (int i = 0; i < count; i++)
+        //var question = new List<Question>();
+        //var random = new Random();
+
+        //for (int i = 0; i < count; i++)
+        //{
+        //    var elementIndex = random.Next(0, availableQuestions.Count);
+
+        //    //availableQuestions.ElementAt(elementIndex);
+
+        //    question.Add(availableQuestions[elementIndex]);
+        //}
+
+        return null;
+    }
+
+    private bool NextQuestion(out Question? question, out Award? award)
+    {
+        if (_questionIndex >= _awards.Count)
         {
-            var elementIndex = random.Next(0, availableQuestions.Count);
-
-            question.Add(availableQuestions[elementIndex]);
+            question = null;
+            award = null;
+            return false;
         }
 
-        return question;
+        if (_callHelp)
+        {
+            question = _questions[_questionIndex - 1];
+            award = _awards[_questionIndex - 1];
+        }
+        else
+        {
+            question = _questions[_questionIndex];
+            award = _awards[_questionIndex];
+
+            _questionIndex++;
+        }
+
+        question.Number = _questionNumber;
+
+        return true;
     }
 
     public void UpdateCurrentAward(decimal currentAward) => CurrentAward = currentAward;
@@ -166,50 +193,34 @@ public class GameService
     {
         OnStarted?.Invoke(this, new StartedArgs(PlayerName));
 
-        var questionNumber = 0;
+        //TODO: embaralhar ordem das questões
 
-        _selectedQuestions = GetRandomQuestion(_awards.Count);
-        _exceptionQuestionsId.AddRange(_selectedQuestions.Select(s => s.Id));
-
-        foreach (var question in _selectedQuestions)
+        while (NextQuestion(out Question? question, out Award? award))
         {
-            question.Number = ++questionNumber;
-
-            var award = GetAward(questionNumber);
-
             OnNextQuestion?.Invoke(this, new NextQuestionArgs(
-                question, PlayerName, CurrentAward, SkipCount, false, HelpCount, award));
+                PlayerName, CurrentAward, question, award, SkipCount, HelpCount, _callHelp));
+
+            // TODO: Transformar _callHelp, _callStop e _callStop em tipo enumerado
 
             if (_callHelp)
             {
                 RemoveRandomOption(question.Options);
-                ResetNumber(question.Options);
-                
-                OnNextQuestion?.Invoke(this, new NextQuestionArgs(
-                    question, PlayerName, CurrentAward, SkipCount, true, HelpCount, award));
+                ResetOptionNumbers(question.Options);
 
-                _callHelp = false;
+                continue;
             }
 
             if (_callSkip)
-            {
-                question.UpdateProps(GetRandomQuestion());
+                continue;
 
-                OnNextQuestion?.Invoke(this, new NextQuestionArgs(
-                    question, PlayerName, CurrentAward, SkipCount, false, HelpCount, award));
-
-                _callSkip = false;
-                break;
-            }
-
-            if (CanStop())
+            if (_callStop)
             {
                 UpdateCurrentAward(award.Stop);
 
                 OnQuestionAswered?.Invoke(
                     this, QuestionAsweredArgs.CreateStopped(award.Stop));
 
-                return;
+                break;
             }
 
             if (!IsCorrect(question, int.Parse(OptionSelected)))
@@ -220,10 +231,15 @@ public class GameService
                 break;
             }
 
+            _questionNumber++;
+
             UpdateCurrentAward(award.Correct);
 
             OnQuestionAswered?.Invoke(
                 this, new QuestionAsweredArgs(QuestionAswered.Right));
         }
+
+        // Evento OnGameOver
+        // Parabéns, você ganhou 1 milhão de reais!
     }
 }

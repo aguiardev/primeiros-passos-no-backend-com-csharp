@@ -25,8 +25,11 @@ var game = new GameService(
 
 game.OnStarted += OnStarted;
 game.OnNextQuestion += OnNextQuestion;
-game.OnQuestionAswered += OnQuestionAswered;
+game.OnRightAswer += OnRightAswer;
+game.OnGameOver += OnGameOver;
 game.Start();
+
+// TODO: começar novo jogo
 
 Console.ReadLine();
 
@@ -36,7 +39,7 @@ void OnStarted(object sender, StartedArgs args)
 {
     Console.WriteLine($"Vamos começar o jogo, {args.PlayerName}!");
 
-    ShowProgressBar();
+    //ShowProgressBar();
 
     Console.Clear();
 }
@@ -61,10 +64,11 @@ void OnNextQuestion(object sender, NextQuestionArgs args)
     while (true)
     {
         optionSelected = Console.ReadLine() ?? string.Empty;
+
         if (game.IsValidOption(
             optionSelected, args.CallHelp, out var message))
         {
-            game.OptionSelected = optionSelected;
+            game.OptionNumberSelected = optionSelected;
             break;
         }
 
@@ -77,25 +81,30 @@ void OnNextQuestion(object sender, NextQuestionArgs args)
     }
 }
 
-void OnQuestionAswered(object sender, QuestionAsweredArgs args)
+void OnRightAswer(object sender, RightAswerArgs args)
 {
-    switch (args.QuestionAswered)
+    Console.Clear();
+    Console.Write("Certa resposta! Aguarde...");
+    Thread.Sleep(TimeSpan.FromSeconds(2));
+}
+
+void OnGameOver(object sender, GameOverArgs args)
+{
+    Console.Clear();
+
+    //TODO: tocar uma música diferente ao terminar o jogo
+
+    switch (args.GameOverReason)
     {
-        case QuestionAswered.Right:
-            Console.Clear();
-            Console.Write("Certa resposta! Aguarde, carregando próxima pergunta...");
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-            break;
-        case QuestionAswered.Wrong:
-            Console.Clear();
+        case GameOverReason.Lost:
             Console.WriteLine($"Resposta errada! Você ganhou {args.Award:C}!");
             break;
-        default:
-            if (args.Stopped)
-            {
-                Console.Clear();
-                Console.WriteLine($"Você decidiu parar e recebeu {args.Award:C}!");
-            }
+        case GameOverReason.Stopped:
+            Console.Clear();
+            Console.WriteLine($"Você decidiu parar e ganhou {args.Award:C}!");
+            break;
+        case GameOverReason.Won:
+            Console.WriteLine($"Parabéns! Você acertou todas as perguntas e ganhou {args.Award:C}!");
             break;
     }
 }

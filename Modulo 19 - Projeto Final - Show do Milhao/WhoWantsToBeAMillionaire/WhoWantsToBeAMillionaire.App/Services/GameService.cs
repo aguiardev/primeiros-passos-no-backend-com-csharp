@@ -3,12 +3,14 @@ using WhoWantsToBeAMillionaire.App.Events;
 using WhoWantsToBeAMillionaire.App.Enums;
 using System.Collections.Generic;
 using System;
+using System.Linq.Expressions;
 
 namespace WhoWantsToBeAMillionaire.App.Services;
 
 public delegate void OnStartedHandler(object sender, StartedArgs args);
 public delegate void OnNextQuestionHandler(object sender, NextQuestionArgs args);
-public delegate void OnQuestionAsweredHandler(object sender, QuestionAsweredArgs args);
+public delegate void OnRightAswerHandler(object sender, RightAswerArgs args);
+public delegate void OnGameOverHandler(object sender, GameOverArgs args);
 
 // TODO: criar partial RandomService
 public class GameService
@@ -18,6 +20,7 @@ public class GameService
     private bool _callHelp;
     private bool _callSkip;
     private bool _callStop;
+    private GameOverReason _gameOverReason;
 
     private readonly List<Award> _awards;
     private readonly List<Question> _questions;
@@ -26,11 +29,12 @@ public class GameService
     public decimal CurrentAward { get; private set; }
     public int HelpCount { get; private set; }
     public int SkipCount { get; private set; }
-    public string OptionSelected { get; set; }
+    public string OptionNumberSelected { get; set; }
 
     public event OnStartedHandler? OnStarted;
     public event OnNextQuestionHandler? OnNextQuestion;
-    public event OnQuestionAsweredHandler? OnQuestionAswered;
+    public event OnRightAswerHandler? OnRightAswer;
+    public event OnGameOverHandler? OnGameOver;
 
     public GameService(List<Question> questions, List<Award> awards, string playerName, int helpCount, int skipCount)
     {
@@ -42,7 +46,7 @@ public class GameService
         PlayerName = playerName;
         HelpCount = helpCount;
         SkipCount = skipCount;
-        OptionSelected = string.Empty;
+        OptionNumberSelected = string.Empty;
     }
 
     private bool CanHelp()
@@ -120,8 +124,10 @@ public class GameService
         return true;
     }
 
-    private bool IsCorrect(Question question, int optionAlias)
-        => question.Options.Any(w => w.IsCorrect && w.Number == optionAlias);
+    private bool IsCorrect(Question question)
+        => int.TryParse(OptionNumberSelected, out var optionNumberSelected)
+        && question.Options.Any(w => w.IsCorrect && w.Number == optionNumberSelected);
+        
 
     private void ResetOptionNumbers(List<Option> options)
     {
@@ -192,6 +198,8 @@ public class GameService
         return true;
     }
 
+    private bool IsFinalQuestion() => _awardIndex == _awards.Count - 1;
+
     public void Start()
     {
         OnStarted?.Invoke(this, new StartedArgs(PlayerName));
@@ -202,8 +210,6 @@ public class GameService
         {
             OnNextQuestion?.Invoke(this, new NextQuestionArgs(
                 PlayerName, CurrentAward, question, award, SkipCount, HelpCount, _callHelp));
-
-            // TODO: Transformar _callHelp, _callSkip e _callStop em tipo enumerado
 
             if (_callHelp)
             {
@@ -219,31 +225,32 @@ public class GameService
             if (_callStop)
             {
                 CurrentAward = award.Stop;
-
-                OnQuestionAswered?.Invoke(
-                    this, QuestionAsweredArgs.CreateStopped(award.Stop));
+                _gameOverReason = GameOverReason.Stopped;
 
                 break;
             }
 
-            if (int.TryParse(OptionSelected, out var optionConverted) &&
-                !IsCorrect(question, optionConverted))
+            if (IsCorrect(question))
             {
-                OnQuestionAswered?.Invoke(
-                    this, new QuestionAsweredArgs(QuestionAswered.Wrong, award.Wrong));
+                CurrentAward = award.Correct;
+                OnRightAswer?.Invoke(this, new RightAswerArgs());
+                
+                if (IsFinalQuestion())
+                {
+                    _gameOverReason = GameOverReason.Won;
+                    break;
+                }
 
+                _awardIndex++;
+            }
+            else
+            {
+                CurrentAward = award.Wrong;
+                _gameOverReason = GameOverReason.Lost;
                 break;
             }
-
-            _awardIndex++;
-
-            CurrentAward = award.Correct;
-
-            OnQuestionAswered?.Invoke(
-                this, new QuestionAsweredArgs(QuestionAswered.Right));
         }
 
-        // Evento OnGameOver
-        // Parabéns, você ganhou 1 milhão de reais!
+        OnGameOver?.Invoke(this, new GameOverArgs(_gameOverReason, CurrentAward));
     }
 }

@@ -9,22 +9,22 @@
 
   <ItemGroup>
     <None Remove="appsettings.json" />
-    <None Remove="BackgroundSongs\abertura.wav" />
-    <None Remove="BackgroundSongs\selecao-perguntas.wav" />
-    <None Remove="BackgroundSongs\suspense.wav" />
+    <None Remove="Resources\abertura.wav" />
+    <None Remove="Resources\selecao-perguntas.wav" />
+    <None Remove="Resources\suspense.wav" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="BackgroundSongs\abertura.wav">
+    <Content Include="Resources\abertura.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="BackgroundSongs\selecao-perguntas.wav">
+    <Content Include="Resources\selecao-perguntas.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="BackgroundSongs\suspense.wav">
+    <Content Include="Resources\suspense.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

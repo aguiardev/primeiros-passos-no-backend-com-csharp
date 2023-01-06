@@ -7,7 +7,7 @@ namespace WhoWantsToBeAMillionaire.App.Services
         private readonly SoundPlayer _soundPlayer;
 
         private static string BasePath
-            => AppDomain.CurrentDomain.BaseDirectory + "\\BackgroundSongs\\{0}";
+            => AppDomain.CurrentDomain.BaseDirectory + "\\Resources\\{0}";
 
         public BackgroundSongService(SoundPlayer soundPlayer)
             => _soundPlayer = soundPlayer;

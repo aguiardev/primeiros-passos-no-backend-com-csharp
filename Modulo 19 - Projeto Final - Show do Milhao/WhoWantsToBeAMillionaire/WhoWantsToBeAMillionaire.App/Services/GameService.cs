@@ -14,11 +14,10 @@ public delegate void OnQuestionAsweredHandler(object sender, QuestionAsweredArgs
 public class GameService
 {
     private int _questionIndex;
-    private int _questionNumber;
+    private int _awardIndex;
     private bool _callHelp;
     private bool _callSkip;
-    private bool _callStop => string.Equals(
-        OptionSelected, Constants.STOP, StringComparison.OrdinalIgnoreCase);
+    private bool _callStop;
 
     private readonly List<Award> _awards;
     private readonly List<Question> _questions;
@@ -36,9 +35,8 @@ public class GameService
     public GameService(List<Question> questions, List<Award> awards, string playerName, int helpCount, int skipCount)
     {
         _questionIndex = 0;
-        _questionNumber = 1;
-        _callHelp = false;
-        _callSkip = false;
+        _awardIndex = 0;
+        _callHelp = _callStop = _callSkip = false;
         _questions = questions;
         _awards = awards;
         PlayerName = playerName;
@@ -80,7 +78,7 @@ public class GameService
             return false;
         }
 
-        _callHelp = false;
+        _callSkip = _callStop = _callHelp = false;
         if (string.Equals(optionAlias, Constants.HELP, StringComparison.OrdinalIgnoreCase))
         {
             if (callHelpBefore)
@@ -99,7 +97,7 @@ public class GameService
             return true;
         }
 
-        _callSkip = false;
+        
         if (string.Equals(optionAlias, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
         {
             if (!CanSkip())
@@ -110,6 +108,12 @@ public class GameService
 
             message = string.Empty;
             return true;
+        }
+
+        if (string.Equals(optionAlias, Constants.STOP, StringComparison.OrdinalIgnoreCase))
+        {
+            message = string.Empty;
+            return _callStop = true;
         }
 
         message = string.Empty;
@@ -160,9 +164,11 @@ public class GameService
         return null;
     }
 
+    private int GetQuestioNumber() => _awardIndex + 1;
+
     private bool NextQuestion(out Question? question, out Award? award)
     {
-        if (_questionIndex >= _awards.Count)
+        if (_awardIndex > _awards.Count)
         {
             question = null;
             award = null;
@@ -172,22 +178,19 @@ public class GameService
         if (_callHelp)
         {
             question = _questions[_questionIndex - 1];
-            award = _awards[_questionIndex - 1];
         }
         else
         {
             question = _questions[_questionIndex];
-            award = _awards[_questionIndex];
 
             _questionIndex++;
         }
 
-        question.Number = _questionNumber;
+        question.Number = GetQuestioNumber();
+        award = _awards[_awardIndex];
 
         return true;
     }
-
-    public void UpdateCurrentAward(decimal currentAward) => CurrentAward = currentAward;
 
     public void Start()
     {
@@ -200,7 +203,7 @@ public class GameService
             OnNextQuestion?.Invoke(this, new NextQuestionArgs(
                 PlayerName, CurrentAward, question, award, SkipCount, HelpCount, _callHelp));
 
-            // TODO: Transformar _callHelp, _callStop e _callStop em tipo enumerado
+            // TODO: Transformar _callHelp, _callSkip e _callStop em tipo enumerado
 
             if (_callHelp)
             {
@@ -215,7 +218,7 @@ public class GameService
 
             if (_callStop)
             {
-                UpdateCurrentAward(award.Stop);
+                CurrentAward = award.Stop;
 
                 OnQuestionAswered?.Invoke(
                     this, QuestionAsweredArgs.CreateStopped(award.Stop));
@@ -223,7 +226,8 @@ public class GameService
                 break;
             }
 
-            if (!IsCorrect(question, int.Parse(OptionSelected)))
+            if (int.TryParse(OptionSelected, out var optionConverted) &&
+                !IsCorrect(question, optionConverted))
             {
                 OnQuestionAswered?.Invoke(
                     this, new QuestionAsweredArgs(QuestionAswered.Wrong, award.Wrong));
@@ -231,9 +235,9 @@ public class GameService
                 break;
             }
 
-            _questionNumber++;
+            _awardIndex++;
 
-            UpdateCurrentAward(award.Correct);
+            CurrentAward = award.Correct;
 
             OnQuestionAswered?.Invoke(
                 this, new QuestionAsweredArgs(QuestionAswered.Right));

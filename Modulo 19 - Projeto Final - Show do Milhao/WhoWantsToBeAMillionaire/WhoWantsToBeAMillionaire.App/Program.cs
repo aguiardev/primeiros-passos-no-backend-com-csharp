@@ -135,14 +135,16 @@ void PrintQuestion(Question question)
 
 void PrintHeader(NextQuestionArgs args)
 {
-    Console.WriteLine($"{args.PlayerName} até agora você ganhou {args.CurrentAward:C}.");
-    Console.WriteLine();
-    Console.WriteLine($">> Digite [{Constants.HELP}] para receber ajuda.");
-    Console.WriteLine($">> Digite [{Constants.SKIP}] para pular para outra pergunta.");
-    Console.WriteLine($">> Digite [{Constants.STOP}] para parar.");
+
+    Console.WriteLine($"Acertar: {args.Award.Correct:C} - Parar: {args.Award.Stop:C} - Errar: {args.Award.Wrong:C}");
     Console.WriteLine();
     Console.WriteLine($"Você tem {args.SkipCount} pulos e {args.HelpCount} pedidos de ajuda.");
-    Console.WriteLine($"Acertar: {args.Award.Correct:C} - Parar: {args.Award.Stop:C} - Errar: {args.Award.Wrong:C}");
+    Console.WriteLine();
+    Console.WriteLine($">> Digite [{Constants.HELP}] para ajuda.");
+    Console.WriteLine($">> Digite [{Constants.SKIP}] para pular.");
+    Console.WriteLine($">> Digite [{Constants.STOP}] para parar.");
+    Console.WriteLine();
+    Console.WriteLine($"{args.PlayerName} até agora você ganhou {args.CurrentAward:C}.");
     Console.WriteLine();
 }
 

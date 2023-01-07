@@ -1,9 +1,6 @@
 ﻿using WhoWantsToBeAMillionaire.App.Entities;
-using WhoWantsToBeAMillionaire.App.Events;
 using WhoWantsToBeAMillionaire.App.Enums;
-using System.Collections.Generic;
-using System;
-using System.Linq.Expressions;
+using WhoWantsToBeAMillionaire.App.Events;
 
 namespace WhoWantsToBeAMillionaire.App.Services;
 
@@ -41,6 +38,8 @@ public class GameService
         _questionIndex = 0;
         _awardIndex = 0;
         _callHelp = _callStop = _callSkip = false;
+
+        Shuffle(questions);
         _questions = questions;
         _awards = awards;
         PlayerName = playerName;
@@ -83,6 +82,7 @@ public class GameService
         }
 
         _callSkip = _callStop = _callHelp = false;
+
         if (string.Equals(optionAlias, Constants.HELP, StringComparison.OrdinalIgnoreCase))
         {
             if (callHelpBefore)
@@ -101,7 +101,6 @@ public class GameService
             return true;
         }
 
-        
         if (string.Equals(optionAlias, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
         {
             if (!CanSkip())
@@ -127,7 +126,6 @@ public class GameService
     private bool IsCorrect(Question question)
         => int.TryParse(OptionNumberSelected, out var optionNumberSelected)
         && question.Options.Any(w => w.IsCorrect && w.Number == optionNumberSelected);
-        
 
     private void ResetOptionNumbers(List<Option> options)
     {
@@ -139,35 +137,26 @@ public class GameService
 
     private void RemoveRandomOption(List<Option> options)
     {
-        var wrongOptions = options.Where(w => !w.IsCorrect).ToList();
+        var wrongOptions = options.Where(w => !w.IsCorrect);
 
-        var removedElementIndex = new Random().Next(0, wrongOptions.Count);
+        var removedElementIndex = new Random().Next(0, wrongOptions.Count());
 
-        var removedElement = wrongOptions[removedElementIndex];
+        var removedElement = wrongOptions.ElementAt(removedElementIndex);
 
         options.Remove(removedElement);
     }
 
-    private List<Question> GetRandomQuestions()
+    private void Shuffle<T>(List<T> list)
     {
-        //TODO: esse método deve embaralhar as questões
-
-        //var availableQuestions = _questions
-        //    .Where(w => !_exceptionQuestionsId.Contains(w.Id)).ToList();
-
-        //var question = new List<Question>();
-        //var random = new Random();
-
-        //for (int i = 0; i < count; i++)
-        //{
-        //    var elementIndex = random.Next(0, availableQuestions.Count);
-
-        //    //availableQuestions.ElementAt(elementIndex);
-
-        //    question.Add(availableQuestions[elementIndex]);
-        //}
-
-        return null;
+        var random = new Random();
+        var n = list.Count;
+        for (int i = 0; i < (n - 1); i++)
+        {
+            int r = i + random.Next(n - i);
+            T t = list[r];
+            list[r] = list[i];
+            list[i] = t;
+        }
     }
 
     private int GetQuestioNumber() => _awardIndex + 1;
@@ -203,8 +192,6 @@ public class GameService
     public void Start()
     {
         OnStarted?.Invoke(this, new StartedArgs(PlayerName));
-
-        //TODO: embaralhar ordem das questões
 
         while (NextQuestion(out Question? question, out Award? award))
         {

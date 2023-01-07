@@ -148,6 +148,7 @@ public class GameService
 
     private void Shuffle<T>(List<T> list)
     {
+        // reference: https://www.dotnetperls.com/fisher-yates-shuffle
         var random = new Random();
         var n = list.Count;
         for (int i = 0; i < (n - 1); i++)

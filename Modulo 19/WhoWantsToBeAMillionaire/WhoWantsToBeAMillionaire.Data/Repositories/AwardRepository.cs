@@ -1,9 +1,11 @@
 ﻿using Dapper;
+using System.Diagnostics.CodeAnalysis;
 using WhoWantsToBeAMillionaire.Data.Entities;
 using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories;
 
+[ExcludeFromCodeCoverage]
 public class AwardRepository : IAwardRepository
 {
     private readonly IConnection _connection;

@@ -150,7 +150,7 @@ public class GameService
     private bool IsCorrect(QuestionModel question)
         => question.Options[_indexSelectedOption].IsCorrect;
 
-    private void RemoveRandomOption(List<OptionsModel> options)
+    private void RemoveWrongOptionRandomly(List<OptionsModel> options)
     {
         var wrongOptions = options.Where(w => !w.IsCorrect);
 
@@ -216,7 +216,7 @@ public class GameService
 
             if (_callHelp)
             {
-                RemoveRandomOption(question.Options);
+                RemoveWrongOptionRandomly(question.Options);
                 continue;
             }
 

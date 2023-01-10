@@ -19,7 +19,10 @@ public class GameService
     private bool _callHelp;
     private bool _callSkip;
     private bool _callStop;
-    private string[] _validOption = new string[]
+    private GameOverReason _gameOverReason;
+    private List<AwardModel> _awards;
+    private List<QuestionModel> _questions;
+    private readonly string[] _validOption = new string[]
     {
         Constants.OPTION_ONE,
         Constants.OPTION_TWO,
@@ -29,9 +32,6 @@ public class GameService
         Constants.STOP,
         Constants.SKIP
     };
-    private GameOverReason _gameOverReason;
-    private List<AwardModel> _awards;
-    private List<QuestionModel> _questions;
     private readonly IAwardService _awardService;
     private readonly IQuestionService _questionService;
 
@@ -45,7 +45,8 @@ public class GameService
     public event OnRightAswerHandler? OnRightAnswer;
     public event OnGameOverHandler? OnGameOver;
 
-    public GameService(IQuestionService questionService, IAwardService awardService, int helpCount, int skipCount)
+    public GameService(
+        IQuestionService questionService, IAwardService awardService, int helpCount, int skipCount)
     {
         _indexSelectedOption = -1;
         _questionIndex = _awardIndex = 0;

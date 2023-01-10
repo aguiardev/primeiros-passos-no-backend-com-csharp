@@ -42,7 +42,7 @@ public class GameService
 
     public event OnStartedHandler? OnStarted;
     public event OnNextQuestionHandler? OnNextQuestion;
-    public event OnRightAswerHandler? OnRightAswer;
+    public event OnRightAswerHandler? OnRightAnswer;
     public event OnGameOverHandler? OnGameOver;
 
     public GameService(IQuestionService questionService, IAwardService awardService, int helpCount, int skipCount)
@@ -232,7 +232,7 @@ public class GameService
             if (IsCorrect(question))
             {
                 CurrentAward = award.Correct;
-                OnRightAswer?.Invoke(this, new RightAswerArgs());
+                OnRightAnswer?.Invoke(this, new RightAswerArgs());
                 
                 if (IsFinalQuestion())
                 {

@@ -82,7 +82,7 @@ internal class Program
         }
     }
 
-    private static void OnRightAswer(object sender, RightAswerArgs args)
+    private static void OnRightAnswer(object sender, RightAswerArgs args)
     {
         Console.Clear();
         Console.Write("Certa resposta! Aguarde...");
@@ -181,7 +181,7 @@ internal class Program
 
         game.OnStarted += OnStarted;
         game.OnNextQuestion += OnNextQuestion;
-        game.OnRightAswer += OnRightAswer;
+        game.OnRightAnswer += OnRightAnswer;
         game.OnGameOver += OnGameOver;
 
         return game;

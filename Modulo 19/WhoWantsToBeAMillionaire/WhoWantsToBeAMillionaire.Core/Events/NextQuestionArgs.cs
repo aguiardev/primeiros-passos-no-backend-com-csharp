@@ -1,13 +1,13 @@
-﻿using WhoWantsToBeAMillionaire.App.Entities;
+﻿using WhoWantsToBeAMillionaire.Core.Models;
 
-namespace WhoWantsToBeAMillionaire.App.Events;
+namespace WhoWantsToBeAMillionaire.Core.Events;
 
 public class NextQuestionArgs : EventArgs
 {
     public string PlayerName { get; private set; }
     public decimal CurrentAward { get; private set; }
-    public Question Question { get; private set; }
-    public Award Award { get; private set; }
+    public QuestionModel Question { get; private set; }
+    public AwardModel Award { get; private set; }
     public int SkipCount { get; private set; }
     public int HelpCount { get; private set; }
     public bool CallHelp { get; private set; }
@@ -15,8 +15,8 @@ public class NextQuestionArgs : EventArgs
     public NextQuestionArgs(
         string playerName,
         decimal currentAward,
-        Question question,
-        Award award,
+        QuestionModel question,
+        AwardModel award,
         int skipCount,
         int helpCount,
         bool callHelp)

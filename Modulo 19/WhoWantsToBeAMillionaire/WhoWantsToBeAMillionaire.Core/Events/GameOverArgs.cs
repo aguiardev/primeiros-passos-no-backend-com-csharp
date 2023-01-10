@@ -1,6 +1,6 @@
-﻿using WhoWantsToBeAMillionaire.App.Enums;
+﻿using WhoWantsToBeAMillionaire.Core.Enums;
 
-namespace WhoWantsToBeAMillionaire.App.Events;
+namespace WhoWantsToBeAMillionaire.Core.Events;
 
 public class GameOverArgs : EventArgs
 {

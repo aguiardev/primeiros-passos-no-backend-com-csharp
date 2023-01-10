@@ -1,6 +1,6 @@
 ﻿using System.Media;
 
-namespace WhoWantsToBeAMillionaire.App.Services
+namespace WhoWantsToBeAMillionaire.Core.Services
 {
     public class BackgroundSongService
     {

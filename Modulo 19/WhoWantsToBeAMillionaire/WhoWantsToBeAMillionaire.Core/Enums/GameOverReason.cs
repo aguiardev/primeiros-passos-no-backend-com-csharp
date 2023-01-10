@@ -1,4 +1,4 @@
-﻿namespace WhoWantsToBeAMillionaire.App.Enums;
+﻿namespace WhoWantsToBeAMillionaire.Core.Enums;
 
 public enum GameOverReason
 {

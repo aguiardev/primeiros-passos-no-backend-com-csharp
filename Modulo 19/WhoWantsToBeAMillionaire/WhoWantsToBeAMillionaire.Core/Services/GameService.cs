@@ -1,8 +1,9 @@
-﻿using WhoWantsToBeAMillionaire.App.Entities;
-using WhoWantsToBeAMillionaire.App.Enums;
-using WhoWantsToBeAMillionaire.App.Events;
+﻿using WhoWantsToBeAMillionaire.Core.Enums;
+using WhoWantsToBeAMillionaire.Core.Events;
+using WhoWantsToBeAMillionaire.Core.Models;
+using WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 
-namespace WhoWantsToBeAMillionaire.App.Services;
+namespace WhoWantsToBeAMillionaire.Core.Services;
 
 public delegate void OnStartedHandler(object sender, StartedArgs args);
 public delegate void OnNextQuestionHandler(object sender, NextQuestionArgs args);
@@ -18,11 +19,13 @@ public class GameService
     private bool _callSkip;
     private bool _callStop;
     private GameOverReason _gameOverReason;
+    private List<AwardModel> _awards;
+    private List<QuestionModel> _questions;
 
-    private readonly List<Award> _awards;
-    private readonly List<Question> _questions;
+    private readonly IAwardService _awardService;
+    private readonly IQuestionService _questionService;
 
-    public readonly string PlayerName;
+    public string PlayerName { get; private set; }
     public decimal CurrentAward { get; private set; }
     public int HelpCount { get; private set; }
     public int SkipCount { get; private set; }
@@ -33,19 +36,26 @@ public class GameService
     public event OnRightAswerHandler? OnRightAswer;
     public event OnGameOverHandler? OnGameOver;
 
-    public GameService(List<Question> questions, List<Award> awards, string playerName, int helpCount, int skipCount)
+    public GameService(IQuestionService questionService, IAwardService awardService, int helpCount, int skipCount)
     {
-        _questionIndex = 0;
-        _awardIndex = 0;
+        _questionIndex = _awardIndex = 0;
         _callHelp = _callStop = _callSkip = false;
+        _questionService = questionService;
+        _awardService = awardService;
 
-        Shuffle(questions);
-        _questions = questions;
-        _awards = awards;
-        PlayerName = playerName;
         HelpCount = helpCount;
         SkipCount = skipCount;
         OptionNumberSelected = string.Empty;
+
+        LoadData();
+    }
+
+    private void LoadData()
+    {
+        _awards = _awardService.GetAll();
+        _questions = _questionService.GetAll();
+        
+        Shuffle(_questions);
     }
 
     private bool CanHelp()
@@ -123,11 +133,12 @@ public class GameService
         return true;
     }
 
-    private bool IsCorrect(Question question)
+    //TODO: bug para encontrar a resposta certa. Vou informar o índice da opção selecionada.
+    private bool IsCorrect(QuestionModel question)
         => int.TryParse(OptionNumberSelected, out var optionNumberSelected)
         && question.Options.Any(w => w.IsCorrect && w.Number == optionNumberSelected);
 
-    private void ResetOptionNumbers(List<Option> options)
+    private void ResetOptionNumbers(List<OptionsModel> options)
     {
         for (int i = 0; i < options.Count; i++)
         {
@@ -135,7 +146,7 @@ public class GameService
         }
     }
 
-    private void RemoveRandomOption(List<Option> options)
+    private void RemoveRandomOption(List<OptionsModel> options)
     {
         var wrongOptions = options.Where(w => !w.IsCorrect);
 
@@ -162,7 +173,7 @@ public class GameService
 
     private int GetQuestioNumber() => _awardIndex + 1;
 
-    private bool NextQuestion(out Question? question, out Award? award)
+    private bool NextQuestion(out QuestionModel? question, out AwardModel? award)
     {
         if (_awardIndex > _awards.Count)
         {
@@ -190,11 +201,13 @@ public class GameService
 
     private bool IsFinalQuestion() => _awardIndex == _awards.Count - 1;
 
-    public void Start()
+    public void Start(string playerName)
     {
+        PlayerName = playerName;
+
         OnStarted?.Invoke(this, new StartedArgs(PlayerName));
 
-        while (NextQuestion(out Question? question, out Award? award))
+        while (NextQuestion(out var question, out var award))
         {
             OnNextQuestion?.Invoke(this, new NextQuestionArgs(
                 PlayerName, CurrentAward, question, award, SkipCount, HelpCount, _callHelp));

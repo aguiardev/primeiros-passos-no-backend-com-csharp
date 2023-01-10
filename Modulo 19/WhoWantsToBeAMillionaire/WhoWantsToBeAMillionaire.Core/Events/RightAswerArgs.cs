@@ -1,4 +1,4 @@
-﻿namespace WhoWantsToBeAMillionaire.App.Events;
+﻿namespace WhoWantsToBeAMillionaire.Core.Events;
 
 public class RightAswerArgs : EventArgs
 {

@@ -10,7 +10,6 @@ public delegate void OnNextQuestionHandler(object sender, NextQuestionArgs args)
 public delegate void OnRightAswerHandler(object sender, RightAswerArgs args);
 public delegate void OnGameOverHandler(object sender, GameOverArgs args);
 
-// TODO: criar partial RandomService
 public class GameService
 {
     private int _indexSelectedOption;

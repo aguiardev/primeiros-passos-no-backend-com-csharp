@@ -3,13 +3,12 @@
 using Microsoft.Extensions.Configuration;
 using System.Media;
 using WhoWantsToBeAMillionaire.Core;
-using WhoWantsToBeAMillionaire.Core.Models;
-using WhoWantsToBeAMillionaire.Core.Events;
 using WhoWantsToBeAMillionaire.Core.Enums;
+using WhoWantsToBeAMillionaire.Core.Events;
+using WhoWantsToBeAMillionaire.Core.Models;
 using WhoWantsToBeAMillionaire.Core.Services;
-using WhoWantsToBeAMillionaire.Data.Repositories;
 using WhoWantsToBeAMillionaire.Data;
-using WhoWantsToBeAMillionaire.Data.Entities;
+using WhoWantsToBeAMillionaire.Data.Repositories;
 
 internal class Program
 {
@@ -18,18 +17,22 @@ internal class Program
 
     private static void Main(string[] args)
     {
-        backgroundSongService.PlayOpening();
-
-        PrintMenu();
-
         while (true)
         {
+            backgroundSongService.PlayOpening();
+
+            PrintMenu();
+
             gameService.Start(GetPlayerName());
 
-            Console.ReadLine();
+            Console.WriteLine("Deseja jogar novamente? Digite S/N.");
 
-            // TODO: perguntar se deseja jogar novamente
-            // Se não, sai do laço
+            string optionSelected = Console.ReadLine() ?? string.Empty;
+
+            if (string.Equals(optionSelected.Trim(), Constants.NO, StringComparison.OrdinalIgnoreCase))
+                break;
+
+            Console.Clear();
         }
     }
 
@@ -61,7 +64,7 @@ internal class Program
 
         while (true)
         {
-            string? optionSelected = Console.ReadLine() ?? string.Empty;
+            string optionSelected = Console.ReadLine() ?? string.Empty;
 
             if (!gameService.IsValidOption(
                 optionSelected, args.CallHelp, out var message))

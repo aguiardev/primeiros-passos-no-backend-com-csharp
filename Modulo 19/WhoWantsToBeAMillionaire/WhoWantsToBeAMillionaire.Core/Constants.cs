@@ -9,4 +9,6 @@ public class Constants
     public const string HELP = "A";
     public const string SKIP = "P";
     public const string STOP = "T";
+    public const string YES = "S";
+    public const string NO = "N";
 }

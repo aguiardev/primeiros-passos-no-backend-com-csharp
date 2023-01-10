@@ -14,9 +14,16 @@ public class OptionsRepository : IOptionsRepository
 
     public List<Options> GetAll()
     {
-        using var connection = _connection.GetConnection();
-        connection.Open();
+        try
+        {
+            using var connection = _connection.GetConnection();
+            connection.Open();
 
-        return connection.Query<Options>(_query).ToList();
+            return connection.Query<Options>(_query).ToList();
+        }
+        catch (Exception ex)
+        {
+            return new List<Options>();
+        }
     }
 }

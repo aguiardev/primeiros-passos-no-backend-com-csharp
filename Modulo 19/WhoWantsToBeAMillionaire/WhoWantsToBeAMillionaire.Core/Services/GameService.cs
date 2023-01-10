@@ -13,15 +13,25 @@ public delegate void OnGameOverHandler(object sender, GameOverArgs args);
 // TODO: criar partial RandomService
 public class GameService
 {
+    private int _indexSelectedOption;
     private int _questionIndex;
     private int _awardIndex;
     private bool _callHelp;
     private bool _callSkip;
     private bool _callStop;
+    private string[] _validOption = new string[]
+    {
+        Constants.OPTION_ONE,
+        Constants.OPTION_TWO,
+        Constants.OPTION_THREE,
+        Constants.OPTION_FOUR,
+        Constants.HELP,
+        Constants.STOP,
+        Constants.SKIP
+    };
     private GameOverReason _gameOverReason;
     private List<AwardModel> _awards;
     private List<QuestionModel> _questions;
-
     private readonly IAwardService _awardService;
     private readonly IQuestionService _questionService;
 
@@ -29,7 +39,6 @@ public class GameService
     public decimal CurrentAward { get; private set; }
     public int HelpCount { get; private set; }
     public int SkipCount { get; private set; }
-    public string OptionNumberSelected { get; set; }
 
     public event OnStartedHandler? OnStarted;
     public event OnNextQuestionHandler? OnNextQuestion;
@@ -38,6 +47,7 @@ public class GameService
 
     public GameService(IQuestionService questionService, IAwardService awardService, int helpCount, int skipCount)
     {
+        _indexSelectedOption = -1;
         _questionIndex = _awardIndex = 0;
         _callHelp = _callStop = _callSkip = false;
         _questionService = questionService;
@@ -45,7 +55,6 @@ public class GameService
 
         HelpCount = helpCount;
         SkipCount = skipCount;
-        OptionNumberSelected = string.Empty;
 
         LoadData();
     }
@@ -78,73 +87,67 @@ public class GameService
         return true;
     }
 
-    public bool IsValidOption(string optionAlias, bool callHelpBefore, out string message)
+    public bool IsValidOption(
+        string selectedOptionNumber, bool callHelpBefore, out string message)
     {
-        if (string.IsNullOrEmpty(optionAlias) &&
-            optionAlias.Trim().ToUpper() is not
-            Constants.OPTION_ONE or
-            Constants.OPTION_TWO or
-            Constants.OPTION_THREE or
-            Constants.OPTION_FOUR)
+        message = string.Empty;
+        
+        _callSkip = _callStop = _callHelp = false;
+
+        if (!_validOption.Contains(selectedOptionNumber.Trim().ToUpper()))
         {
             message = "Opção inválida! Tente novamente.";
             return false;
         }
 
-        _callSkip = _callStop = _callHelp = false;
-
-        if (string.Equals(optionAlias, Constants.HELP, StringComparison.OrdinalIgnoreCase))
+        if (selectedOptionNumber.Trim().ToUpper() is
+            Constants.OPTION_ONE or
+            Constants.OPTION_TWO or
+            Constants.OPTION_THREE or
+            Constants.OPTION_FOUR)
         {
-            if (callHelpBefore)
-            {
-                message = "Você só pode pedir ajuda uma vez por pergunta!";
-                return false;
-            }
-
-            if (!CanHelp())
-            {
-                message = "Você não pode mais pedir ajuda!";
-                return false;
-            }
-
-            message = string.Empty;
-            return true;
+            _indexSelectedOption = int.Parse(selectedOptionNumber) - 1;
+        }
+        else
+        {
+            _indexSelectedOption = -1;
         }
 
-        if (string.Equals(optionAlias, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
+        if (_indexSelectedOption == -1)
         {
-            if (!CanSkip())
+            if (string.Equals(selectedOptionNumber, Constants.HELP, StringComparison.OrdinalIgnoreCase))
             {
-                message = "Você não pode mais pular!";
-                return false;
+                if (callHelpBefore)
+                {
+                    message = "Você só pode pedir ajuda uma vez por pergunta!";
+                    return false;
+                }
+
+                if (!CanHelp())
+                {
+                    message = "Você não pode mais pedir ajuda!";
+                    return false;
+                }
             }
-
-            message = string.Empty;
-            return true;
+            else if (string.Equals(selectedOptionNumber, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!CanSkip())
+                {
+                    message = "Você não pode mais pular!";
+                    return false;
+                }
+            }
+            else if (string.Equals(selectedOptionNumber, Constants.STOP, StringComparison.OrdinalIgnoreCase))
+            {
+                _callStop = true;
+            }
         }
-
-        if (string.Equals(optionAlias, Constants.STOP, StringComparison.OrdinalIgnoreCase))
-        {
-            message = string.Empty;
-            return _callStop = true;
-        }
-
-        message = string.Empty;
+        
         return true;
     }
 
-    //TODO: bug para encontrar a resposta certa. Vou informar o índice da opção selecionada.
     private bool IsCorrect(QuestionModel question)
-        => int.TryParse(OptionNumberSelected, out var optionNumberSelected)
-        && question.Options.Any(w => w.IsCorrect && w.Number == optionNumberSelected);
-
-    private void ResetOptionNumbers(List<OptionsModel> options)
-    {
-        for (int i = 0; i < options.Count; i++)
-        {
-            options[i].Number = i + 1;
-        }
-    }
+        => question.Options[_indexSelectedOption].IsCorrect;
 
     private void RemoveRandomOption(List<OptionsModel> options)
     {
@@ -152,9 +155,7 @@ public class GameService
 
         var removedElementIndex = new Random().Next(0, wrongOptions.Count());
 
-        var removedElement = wrongOptions.ElementAt(removedElementIndex);
-
-        options.Remove(removedElement);
+        wrongOptions.ElementAt(removedElementIndex).Hidden = true;
     }
 
     private void Shuffle<T>(List<T> list)
@@ -215,8 +216,6 @@ public class GameService
             if (_callHelp)
             {
                 RemoveRandomOption(question.Options);
-                ResetOptionNumbers(question.Options);
-
                 continue;
             }
 
@@ -227,7 +226,6 @@ public class GameService
             {
                 CurrentAward = award.Stop;
                 _gameOverReason = GameOverReason.Stopped;
-
                 break;
             }
 

@@ -9,6 +9,7 @@ using WhoWantsToBeAMillionaire.Core.Enums;
 using WhoWantsToBeAMillionaire.Core.Services;
 using WhoWantsToBeAMillionaire.Data.Repositories;
 using WhoWantsToBeAMillionaire.Data;
+using WhoWantsToBeAMillionaire.Data.Entities;
 
 internal class Program
 {
@@ -62,19 +63,19 @@ internal class Program
         {
             string? optionSelected = Console.ReadLine() ?? string.Empty;
 
-            if (gameService.IsValidOption(
+            if (!gameService.IsValidOption(
                 optionSelected, args.CallHelp, out var message))
             {
-                gameService.OptionNumberSelected = optionSelected;
-                break;
+                Console.Clear();
+                Console.WriteLine(message);
+                Console.WriteLine();
+
+                PrintHeader(args);
+                PrintQuestion(args.Question);
+                continue;
             }
 
-            Console.Clear();
-            Console.WriteLine(message);
-            Console.WriteLine();
-
-            PrintHeader(args);
-            PrintQuestion(args.Question);
+            break;
         }
     }
 
@@ -121,9 +122,13 @@ internal class Program
         Console.WriteLine($"Pergunta {question.Number}: {question.Description}");
         Console.WriteLine();
 
-        for (int i = 0; i < question.Options.Count; i++)
+        int number = 1;
+        foreach (var option in question.Options.Where(w => !w.Hidden))
         {
-            Console.WriteLine($"{i + 1}) {question.Options[i].Description}");
+            Console.WriteLine($"{number}) {option.Description}");
+
+            option.Number = number;
+            number++;
         }
 
         Console.WriteLine();

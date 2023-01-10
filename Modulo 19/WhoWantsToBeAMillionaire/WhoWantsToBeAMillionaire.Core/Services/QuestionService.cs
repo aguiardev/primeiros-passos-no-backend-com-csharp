@@ -31,7 +31,7 @@ public class QuestionService : IQuestionService
         {
             var optionsParsed = options
                 .Where(f => f.QuestionId == question.Id)
-                .Select(s => new OptionsModel(s.Id, s.Description))
+                .Select(s => new OptionsModel(s.Id, s.Description, s.Correct))
                 .ToList();
 
             questionsParsed.Add(new(question.Id, question.Description, optionsParsed));

@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhoWantsToBeAMillionaire.Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhoWantsToBeAMillionaire.Core", "WhoWantsToBeAMillionaire.Core\WhoWantsToBeAMillionaire.Core.csproj", "{1FBC23E9-B029-4DC6-B50C-8446C1A97D6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhoWantsToBeAMillionaire.UnitTest", "WhoWantsToBeAMillionaire.UnitTest\WhoWantsToBeAMillionaire.UnitTest.csproj", "{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,14 +41,6 @@ Global
 		{1FBC23E9-B029-4DC6-B50C-8446C1A97D6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1FBC23E9-B029-4DC6-B50C-8446C1A97D6F}.Release|x64.ActiveCfg = Release|Any CPU
 		{1FBC23E9-B029-4DC6-B50C-8446C1A97D6F}.Release|x64.Build.0 = Release|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Debug|x64.Build.0 = Debug|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Release|x64.ActiveCfg = Release|Any CPU
-		{D3E1ED81-F10D-4980-9F77-C1DC7D510B0B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

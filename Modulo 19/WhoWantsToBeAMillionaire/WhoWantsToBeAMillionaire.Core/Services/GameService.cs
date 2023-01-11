@@ -56,8 +56,6 @@ public class GameService
 
         HelpCount = helpCount;
         SkipCount = skipCount;
-
-        LoadData();
     }
 
     private void LoadData()
@@ -221,6 +219,8 @@ public class GameService
 
     public void Start(string playerName)
     {
+        LoadData();
+
         PlayerName = playerName;
 
         OnStarted?.Invoke(this, new StartedArgs(PlayerName));

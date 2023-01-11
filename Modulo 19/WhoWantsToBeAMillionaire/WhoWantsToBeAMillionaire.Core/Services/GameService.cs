@@ -1,4 +1,5 @@
-﻿using WhoWantsToBeAMillionaire.Core.Enums;
+﻿using Azure.Identity;
+using WhoWantsToBeAMillionaire.Core.Enums;
 using WhoWantsToBeAMillionaire.Core.Events;
 using WhoWantsToBeAMillionaire.Core.Exceptions;
 using WhoWantsToBeAMillionaire.Core.Models;
@@ -78,6 +79,8 @@ public class GameService
 
         if (_questions.Count < _awards.Count)
             throw new LessQuestionThanAwardsException("Há menos perguntas do que prêmios cadastrados.");
+
+        // TODO: verificar se a quantidade de alternativas corretas cadastradas estão corretas.
 
         Shuffle(_questions);
     }

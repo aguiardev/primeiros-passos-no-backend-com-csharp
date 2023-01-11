@@ -1,5 +1,8 @@
-﻿namespace WhoWantsToBeAMillionaire.Core.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace WhoWantsToBeAMillionaire.Core.Models;
+
+[ExcludeFromCodeCoverage]
 public class QuestionModel
 {
     public int Id { get; set; }

@@ -2,6 +2,7 @@
 **/obj
 **/.*
 **/*.db*
+**/*coverage*
 !/.gitignore
 
 # Log files

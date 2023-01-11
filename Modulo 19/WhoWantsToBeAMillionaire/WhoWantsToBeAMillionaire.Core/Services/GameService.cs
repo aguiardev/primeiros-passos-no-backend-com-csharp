@@ -1,5 +1,6 @@
 ﻿using WhoWantsToBeAMillionaire.Core.Enums;
 using WhoWantsToBeAMillionaire.Core.Events;
+using WhoWantsToBeAMillionaire.Core.Exceptions;
 using WhoWantsToBeAMillionaire.Core.Models;
 using WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 
@@ -62,8 +63,24 @@ public class GameService
     private void LoadData()
     {
         _awards = _awardService.GetAll();
+        if (!_awards.Any())
+            throw new AwardListNotFoundException("A lista de prêmios está vazia.");
+
         _questions = _questionService.GetAll();
-        
+        if (!_questions.Any())
+            throw new QuestionListNotFoundException("A lista de questões está vazia.");
+
+        var invalidQuestions = _questions
+            .Where(a => a.Options.Count < 4)
+            .Select(s => s.Id);
+
+        if (invalidQuestions.Any())
+            throw new OptionListNotFoundException(
+                $"Id das perguntas que estão com menos de 4 opções cadastradas: {string.Join(',', invalidQuestions)}");
+
+        if (_questions.Count < _awards.Count)
+            throw new LessQuestionThanAwardsException("Há menos perguntas do que prêmios cadastrados.");
+
         Shuffle(_questions);
     }
 

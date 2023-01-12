@@ -5,7 +5,6 @@ using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories;
 
-[ExcludeFromCodeCoverage]
 public class AwardRepository : IAwardRepository
 {
     private readonly IConnection _connection;

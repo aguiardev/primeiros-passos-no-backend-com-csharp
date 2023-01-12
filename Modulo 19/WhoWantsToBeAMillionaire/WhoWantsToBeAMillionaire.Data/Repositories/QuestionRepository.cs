@@ -1,11 +1,9 @@
 ﻿using Dapper;
-using System.Diagnostics.CodeAnalysis;
 using WhoWantsToBeAMillionaire.Data.Entities;
 using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories;
 
-[ExcludeFromCodeCoverage]
 public class QuestionRepository : IQuestionRepository
 {
     private readonly IConnection _connection;

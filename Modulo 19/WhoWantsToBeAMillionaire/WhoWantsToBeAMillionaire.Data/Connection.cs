@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace WhoWantsToBeAMillionaire.Data;
 
-[ExcludeFromCodeCoverage]
 public class Connection : IConnection
 {
     private readonly string _connectionString;

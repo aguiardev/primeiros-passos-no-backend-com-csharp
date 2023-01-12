@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+  </ItemGroup>
+	
+  <ItemGroup>
     <None Remove="Migrations\Script0001 - Create award.sql" />
     <None Remove="Migrations\Script0002 - Create questions.sql" />
   </ItemGroup>

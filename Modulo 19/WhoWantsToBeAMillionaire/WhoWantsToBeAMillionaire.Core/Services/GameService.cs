@@ -1,16 +1,10 @@
-﻿using Azure.Identity;
-using WhoWantsToBeAMillionaire.Core.Enums;
+﻿using WhoWantsToBeAMillionaire.Core.Enums;
 using WhoWantsToBeAMillionaire.Core.Events;
 using WhoWantsToBeAMillionaire.Core.Exceptions;
 using WhoWantsToBeAMillionaire.Core.Models;
 using WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Core.Services;
-
-public delegate void OnStartedHandler(object sender, StartedArgs args);
-public delegate void OnNextQuestionHandler(object sender, NextQuestionArgs args);
-public delegate void OnRightAswerHandler(object sender, RightAswerArgs args);
-public delegate void OnGameOverHandler(object sender, GameOverArgs args);
 
 public class GameService
 {
@@ -41,10 +35,10 @@ public class GameService
     public int HelpCount { get; private set; }
     public int SkipCount { get; private set; }
 
-    public event OnStartedHandler? OnStarted;
-    public event OnNextQuestionHandler? OnNextQuestion;
-    public event OnRightAswerHandler? OnRightAnswer;
-    public event OnGameOverHandler? OnGameOver;
+    public event EventHandler<StartedArgs> OnStarted;
+    public event EventHandler<NextQuestionArgs> OnNextQuestion;
+    public event EventHandler<RightAnswerArgs> OnRightAnswer;
+    public event EventHandler<GameOverArgs> OnGameOver;
 
     public GameService(
         IQuestionService questionService, IAwardService awardService, int helpCount, int skipCount)
@@ -252,7 +246,7 @@ public class GameService
             if (IsCorrect(question))
             {
                 CurrentAward = award.Correct;
-                OnRightAnswer?.Invoke(this, new RightAswerArgs());
+                OnRightAnswer?.Invoke(this, new RightAnswerArgs());
                 
                 if (IsFinalQuestion())
                 {

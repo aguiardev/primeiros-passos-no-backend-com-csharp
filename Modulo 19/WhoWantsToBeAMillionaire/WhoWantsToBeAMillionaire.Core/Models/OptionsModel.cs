@@ -6,8 +6,8 @@ namespace WhoWantsToBeAMillionaire.Core.Models;
 public class OptionsModel
 {
     public int Number { get; set; }
-    public string Description { get; set; }
-    public bool IsCorrect { get; set; }
+    public string Description { get; private set; }
+    public bool IsCorrect { get; private set; }
     public bool Hidden { get; set; } = false;
 
     public OptionsModel(int number, string description, bool isCorrect)

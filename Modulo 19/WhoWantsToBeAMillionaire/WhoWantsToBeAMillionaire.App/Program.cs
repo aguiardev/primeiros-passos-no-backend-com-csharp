@@ -15,6 +15,8 @@ internal class Program
     private static readonly BackgroundSongService backgroundSongService = new(new SoundPlayer());
     private static readonly GameService? gameService = ConfigGame();
 
+    //TODO: configurar DpUp para rodar as migrations
+
     private static void Main(string[] args)
     {
         while (true)
@@ -36,82 +38,6 @@ internal class Program
         }
     }
 
-    #region Events
-
-    private static void OnStarted(object sender, StartedArgs args)
-    {
-        Console.WriteLine($"Vamos começar o jogo, {args.PlayerName}!");
-
-        //ShowProgressBar();
-
-        Console.Clear();
-    }
-
-    private static void OnNextQuestion(object sender, NextQuestionArgs args)
-    {
-        Console.Clear();
-
-        if (!args.CallHelp)
-        {
-            backgroundSongService.PlayQuestionSelection();
-            backgroundSongService.PlayThriller();
-        }
-
-        PrintHeader(args);
-        PrintQuestion(args.Question);
-
-        // TODO: verificar possível bug que retorna pergunta repetida quando pulamos
-
-        while (true)
-        {
-            string optionSelected = Console.ReadLine() ?? string.Empty;
-
-            if (!gameService.IsValidOption(
-                optionSelected, args.CallHelp, out var message))
-            {
-                Console.Clear();
-                Console.WriteLine(message);
-                Console.WriteLine();
-
-                PrintHeader(args);
-                PrintQuestion(args.Question);
-                continue;
-            }
-
-            break;
-        }
-    }
-
-    private static void OnRightAnswer(object sender, RightAswerArgs args)
-    {
-        Console.Clear();
-        Console.Write("Certa resposta! Aguarde...");
-        Thread.Sleep(TimeSpan.FromSeconds(2));
-    }
-
-    private static void OnGameOver(object sender, GameOverArgs args)
-    {
-        Console.Clear();
-
-        //TODO: tocar uma música diferente ao terminar o jogo
-
-        switch (args.GameOverReason)
-        {
-            case GameOverReason.Lost:
-                Console.WriteLine($"Resposta errada! Você ganhou {args.Award:C}!");
-                break;
-            case GameOverReason.Stopped:
-                Console.Clear();
-                Console.WriteLine($"Você decidiu parar e ganhou {args.Award:C}!");
-                break;
-            case GameOverReason.Won:
-                Console.WriteLine($"Parabéns! Você acertou todas as perguntas e ganhou {args.Award:C}!");
-                break;
-        }
-    }
-
-    #endregion
-
     #region Prints Methods
 
     private static void PrintMenu()
@@ -130,7 +56,7 @@ internal class Program
         {
             Console.WriteLine($"{number}) {option.Description}");
 
-            option.Number = number;
+            option.Number = number; //TODO: ainda preciso desse atributo?
             number++;
         }
 
@@ -179,10 +105,77 @@ internal class Program
             settings.HelpCount,
             settings.SkipCount);
 
-        game.OnStarted += OnStarted;
-        game.OnNextQuestion += OnNextQuestion;
-        game.OnRightAnswer += OnRightAnswer;
-        game.OnGameOver += OnGameOver;
+        game.OnStarted += (sender, args) =>
+        {
+            Console.WriteLine($"Vamos começar o jogo, {args.PlayerName}!");
+
+            //ShowProgressBar();
+
+            Console.Clear();
+        };
+
+        game.OnNextQuestion += (sender, args) =>
+        {
+            Console.Clear();
+
+            if (!args.CallHelp)
+            {
+                backgroundSongService.PlayQuestionSelection();
+                backgroundSongService.PlayThriller();
+            }
+
+            PrintHeader(args);
+            PrintQuestion(args.Question);
+
+            // TODO: verificar possível bug que retorna pergunta repetida quando pulamos
+
+            while (true)
+            {
+                string optionSelected = Console.ReadLine() ?? string.Empty;
+
+                if (!gameService.IsValidOption(
+                    optionSelected, args.CallHelp, out var message))
+                {
+                    Console.Clear();
+                    Console.WriteLine(message);
+                    Console.WriteLine();
+
+                    PrintHeader(args);
+                    PrintQuestion(args.Question);
+                    continue;
+                }
+
+                break;
+            }
+        };
+        
+        game.OnRightAnswer += (sender, args) =>
+        {
+            Console.Clear();
+            Console.Write("Certa resposta! Aguarde...");
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+        };
+        
+        game.OnGameOver += (sender, args) =>
+        {
+            Console.Clear();
+
+            //TODO: tocar uma música diferente ao terminar o jogo
+
+            switch (args.GameOverReason)
+            {
+                case GameOverReason.Lost:
+                    Console.WriteLine($"Resposta errada! Você ganhou {args.Award:C}!");
+                    break;
+                case GameOverReason.Stopped:
+                    Console.Clear();
+                    Console.WriteLine($"Você decidiu parar e ganhou {args.Award:C}!");
+                    break;
+                case GameOverReason.Won:
+                    Console.WriteLine($"Parabéns! Você acertou todas as perguntas e ganhou {args.Award:C}!");
+                    break;
+            }
+        };
 
         return game;
     }

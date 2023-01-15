@@ -95,15 +95,18 @@ internal class Program
         var awardRepository = new AwardRepository(connection);
         var questionRepository = new QuestionRepository(connection);
         var optionsRepository = new OptionsRepository(connection);
+        var rankingRepository = new RankingRepository(connection);
 
         var questionService = new QuestionService(optionsRepository, questionRepository);
         var awardService = new AwardService(awardRepository);
+        var rankingService = new RankingService(rankingRepository);
 
         var game = new GameService(
             questionService,
             awardService,
             settings.HelpCount,
-            settings.SkipCount);
+            settings.SkipCount,
+            rankingService);
 
         game.OnStarted += (sender, args) =>
         {

@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using System.Diagnostics.CodeAnalysis;
 using WhoWantsToBeAMillionaire.Data.Entities;
 using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 

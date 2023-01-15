@@ -13,10 +13,14 @@
   <ItemGroup>
     <None Remove="Migrations\Script0001 - Create award.sql" />
     <None Remove="Migrations\Script0002 - Create questions.sql" />
+    <None Remove="Migrations\Script0003 - Create ranking.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Migrations\Script0001 - Create award.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\Script0003 - Create ranking.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Script0002 - Create questions.sql">

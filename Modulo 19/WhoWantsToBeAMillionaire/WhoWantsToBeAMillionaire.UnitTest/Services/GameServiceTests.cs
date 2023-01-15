@@ -13,12 +13,13 @@ public class GameServiceTests
     private GameService _gameService;
     private readonly Mock<IQuestionService> _questionService;
     private readonly Mock<IAwardService> _awardService;
+    private readonly Mock<IRankingService> _rankingService;
 
     public GameServiceTests()
     {
         _questionService = new Mock<IQuestionService>();
         _awardService = new Mock<IAwardService>();
-
+        _rankingService = new Mock<IRankingService>();
     }
 
     [Fact(DisplayName = "Dada uma lista de prêmios vazia, quando carregar os dados deve lançar uma exceção.")]
@@ -34,7 +35,11 @@ public class GameServiceTests
         _awardService.Setup(s => s.GetAll()).Returns(emptyAwardList);
 
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, helpCount, skipCount);
+            _questionService.Object,
+            _awardService.Object,
+            helpCount, 
+            skipCount,
+            _rankingService.Object);
 
         // assert
         Assert.Throws<AwardListNotFoundException>(() => _gameService.Start(playerName));
@@ -47,8 +52,8 @@ public class GameServiceTests
         const string playerName = "Silvio";
         var awardList = new List<AwardModel>()
         {
-            new AwardModel(1, 1000m, 0m, 0m),
-            new AwardModel(2, 2000m, 1000m, 500m),
+            new AwardModel(1, 1000, 0, 0),
+            new AwardModel(2, 2000, 1000, 500),
         };
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
@@ -58,7 +63,7 @@ public class GameServiceTests
         _questionService.Setup(s => s.GetAll()).Returns(emptyQuestionList);
 
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, 3, 3);
+            _questionService.Object, _awardService.Object, 3, 3, _rankingService.Object);
 
         // assert
         Assert.Throws<QuestionListNotFoundException>(() => _gameService.Start(playerName));
@@ -74,8 +79,8 @@ public class GameServiceTests
 
         var awardList = new List<AwardModel>()
         {
-            new AwardModel(1, 1000m, 0m, 0m),
-            new AwardModel(2, 2000m, 1000m, 500m),
+            new AwardModel(1, 1000, 0, 0),
+            new AwardModel(2, 2000, 1000, 500),
         };
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
@@ -106,7 +111,11 @@ public class GameServiceTests
         _questionService.Setup(s => s.GetAll()).Returns(questionList);
 
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, helpCount, skipCount);
+            _questionService.Object,
+            _awardService.Object,
+            helpCount,
+            skipCount,
+            _rankingService.Object);
 
         // assert
         Assert.Throws<OptionListNotFoundException>(() => _gameService.Start(playerName));
@@ -122,8 +131,8 @@ public class GameServiceTests
 
         var awardList = new List<AwardModel>()
         {
-            new AwardModel(1, 1000m, 0m, 0m),
-            new AwardModel(2, 2000m, 1000m, 500m),
+            new AwardModel(1, 1000, 0, 0),
+            new AwardModel(2, 2000, 1000, 500),
         };
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
@@ -145,7 +154,11 @@ public class GameServiceTests
         _questionService.Setup(s => s.GetAll()).Returns(questionList);
 
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, helpCount, skipCount);
+            _questionService.Object,
+            _awardService.Object,
+            helpCount,
+            skipCount,
+            _rankingService.Object);
 
         // assert
         Assert.Throws<LessQuestionThanAwardsException>(() => _gameService.Start(playerName));
@@ -161,10 +174,10 @@ public class GameServiceTests
 
         var awardList = new List<AwardModel>()
         {
-            new AwardModel(1, 1000m, 0m, 0m),
-            new AwardModel(2, 2000m, 1000m, 500m),
-            new AwardModel(3, 3000m, 2000m, 1000m),
-            new AwardModel(4, 4000m, 3000m, 1500m)
+            new AwardModel(1, 1000, 0, 0),
+            new AwardModel(2, 2000, 1000, 500),
+            new AwardModel(3, 3000, 2000, 1000),
+            new AwardModel(4, 4000, 3000, 1500)
         };
 
         var expectedAward = awardList.Max(m => m.Correct);
@@ -218,7 +231,11 @@ public class GameServiceTests
         _questionService.Setup(s => s.GetAll()).Returns(questionList);
         
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, helpCount, skipCount);
+            _questionService.Object,
+            _awardService.Object,
+            helpCount,
+            skipCount,
+            _rankingService.Object);
 
         var isValidOption = false;
 
@@ -277,10 +294,10 @@ public class GameServiceTests
 
         var awardList = new List<AwardModel>()
         {
-            new AwardModel(1, 1000m, 0m, 0m),
-            new AwardModel(2, 2000m, 1000m, 500m),
-            new AwardModel(3, 3000m, 2000m, 1000m),
-            new AwardModel(4, 4000m, 3000m, 1500m)
+            new AwardModel(1, 1000, 0, 0),
+            new AwardModel(2, 2000, 1000, 500),
+            new AwardModel(3, 3000, 2000, 1000),
+            new AwardModel(4, 4000, 3000, 1500)
         };
 
         var expectedAward = 0m;
@@ -334,7 +351,11 @@ public class GameServiceTests
         _questionService.Setup(s => s.GetAll()).Returns(questionList);
 
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, helpCount, skipCount);
+            _questionService.Object,
+            _awardService.Object,
+            helpCount,
+            skipCount,
+            _rankingService.Object);
 
         var isValidOption = false;
 
@@ -371,7 +392,7 @@ public class GameServiceTests
 
         var awardList = new List<AwardModel>()
         {
-            new AwardModel(1, 1000m, 0m, 0m),
+            new AwardModel(1, 1000, 0, 0),
             //new AwardModel(2, 2000m, 1000m, 500m),
             //new AwardModel(3, 3000m, 2000m, 1000m),
             //new AwardModel(4, 4000m, 3000m, 1500m)
@@ -428,7 +449,11 @@ public class GameServiceTests
         _questionService.Setup(s => s.GetAll()).Returns(questionList);
 
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, helpCount, skipCount);
+            _questionService.Object,
+            _awardService.Object,
+            helpCount,
+            skipCount,
+            _rankingService.Object);
 
         var onNextQuestionRaisesCountExpected = awardList.Count + 1;
         var onNextQuestionRaisesCountActual = 0;

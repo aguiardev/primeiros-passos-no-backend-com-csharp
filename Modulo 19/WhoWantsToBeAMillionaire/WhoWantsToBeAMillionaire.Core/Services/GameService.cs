@@ -30,9 +30,10 @@ public class GameService
     };
     private readonly IAwardService _awardService;
     private readonly IQuestionService _questionService;
+    private readonly IRankingService _rankingService;
 
     public string PlayerName { get; private set; }
-    public decimal CurrentAward { get; private set; }
+    public int CurrentAward { get; private set; }
     public int HelpCount { get; private set; }
     public int SkipCount { get; private set; }
 
@@ -42,7 +43,11 @@ public class GameService
     public event EventHandler<GameOverArgs> OnGameOver;
 
     public GameService(
-        IQuestionService questionService, IAwardService awardService, int helpCount, int skipCount)
+        IQuestionService questionService,
+        IAwardService awardService,
+        int helpCount,
+        int skipCount,
+        IRankingService rankingService)
     {
         _indexSelectedOption = -1;
         _questionIndex = _awardIndex = 0;
@@ -52,6 +57,7 @@ public class GameService
 
         HelpCount = helpCount;
         SkipCount = skipCount;
+        _rankingService = rankingService;
     }
 
     private void LoadData()
@@ -266,6 +272,7 @@ public class GameService
             }
         }
 
+        _rankingService.Create(playerName, HelpCount, SkipCount, CurrentAward);
         OnGameOver?.Invoke(this, new GameOverArgs(_gameOverReason, CurrentAward));
     }
 }

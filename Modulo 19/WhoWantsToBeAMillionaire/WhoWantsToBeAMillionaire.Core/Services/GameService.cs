@@ -14,6 +14,7 @@ public class GameService
     private bool _callHelp;
     private bool _callSkip;
     private bool _callStop;
+    private bool _isValidOption;
     private GameOverReason _gameOverReason;
     private List<AwardModel> _awards;
     private List<QuestionModel> _questions;
@@ -45,7 +46,7 @@ public class GameService
     {
         _indexSelectedOption = -1;
         _questionIndex = _awardIndex = 0;
-        _callHelp = _callStop = _callSkip = false;
+        _callHelp = _callStop = _callSkip = _isValidOption = false;
         _questionService = questionService;
         _awardService = awardService;
 
@@ -104,7 +105,7 @@ public class GameService
     {
         message = string.Empty;
         
-        _callSkip = _callStop = _callHelp = false;
+        _callSkip = _callStop = _callHelp = _isValidOption = false;
 
         if (!_validOption.Contains(selectedOptionNumber.Trim().ToUpper()))
         {
@@ -154,12 +155,13 @@ public class GameService
                 _callStop = true;
             }
         }
-        
+
+        _isValidOption = true;
         return true;
     }
 
     private bool IsCorrect(QuestionModel question)
-        => question.Options[_indexSelectedOption].IsCorrect;
+        => _isValidOption && question.Options[_indexSelectedOption].IsCorrect;
 
     private void RemoveWrongOptionRandomly(List<OptionsModel> options)
     {

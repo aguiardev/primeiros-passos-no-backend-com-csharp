@@ -1,4 +1,5 @@
-﻿using WhoWantsToBeAMillionaire.Core.Services.Interfaces;
+﻿using WhoWantsToBeAMillionaire.Core.Models;
+using WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 using WhoWantsToBeAMillionaire.Data.Entities;
 using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
@@ -11,15 +12,16 @@ public class RankingService : IRankingService
     public RankingService(IRankingRepository rankingRepository)
         => _rankingRepository = rankingRepository;
 
-    public List<Ranking> TopFive()
+    public List<RankingModel> GetTopFive()
     {
-        // TODO: obtém todos os registros. Depois ordena por:
-        // Maior prêmio e menos quantidade de pedidos de ajuda e pulos
-        // Então pega os 5 primeiros.
+        var ranking = _rankingRepository.GetAll();
 
-        throw new NotImplementedException();
+        return ranking
+            .Select(s => new RankingModel(s.PlayerName, s.HelpCount, s.SkipCount, s.Award))
+            .ToList();
     }
 
+    //TODO: adicionar campo de data hora da partida
     public bool Create(string playerName, int helpCount, int skipCount, int award)
     {
         var ranking = new Ranking()

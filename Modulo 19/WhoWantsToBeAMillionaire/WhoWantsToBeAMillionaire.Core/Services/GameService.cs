@@ -222,6 +222,9 @@ public class GameService
 
     private bool IsFinalQuestion() => _awardIndex == _awards.Count - 1;
 
+    public List<RankingModel> GetTopFiveRaknking()
+        => _rankingService.GetTopFive();
+
     public void Start(string playerName)
     {
         LoadData();

@@ -10,40 +10,59 @@ using WhoWantsToBeAMillionaire.Core.Services;
 using WhoWantsToBeAMillionaire.Data;
 using WhoWantsToBeAMillionaire.Data.Repositories;
 
-internal class Program
+public class Program
 {
-    private static readonly BackgroundSongService backgroundSongService = new(new SoundPlayer());
-    private static readonly GameService? gameService = ConfigGame();
+    private static readonly BackgroundSongService _backgroundSongService = new(new SoundPlayer());
+    private static readonly GameService _gameService = ConfigGame();
 
     //TODO: configurar DpUp para rodar as migrations
-
+    
     private static void Main(string[] args)
     {
-        while (true)
-        {
-            backgroundSongService.PlayOpening();
+        Console.Title = "Show do Milhão";
 
-            PrintMenu();
-
-            gameService.Start(GetPlayerName());
-
-            Console.WriteLine("Deseja jogar novamente? Digite S/N.");
-
-            string optionSelected = Console.ReadLine() ?? string.Empty;
-
-            if (string.Equals(optionSelected.Trim(), Constants.NO, StringComparison.OrdinalIgnoreCase))
-                break;
-
-            Console.Clear();
-        }
+        PrintMainMenu();
     }
 
     #region Prints Methods
 
-    private static void PrintMenu()
+    private static void PrintMainMenu()
     {
-        Console.WriteLine("Bem-vindo(a) ao Show do Milhão!");
-        Console.WriteLine("");
+        _backgroundSongService.PlayOpening();
+
+        while (true)
+        {
+            Console.WriteLine("Bem-vindo(a) ao Show do Milhão!");
+            Console.WriteLine("");
+            Console.WriteLine("Selecione a opção desejada:");
+            Console.WriteLine("");
+            Console.WriteLine("1 - Começar novo jogo");
+            Console.WriteLine("2 - Visualizar ranking");
+            Console.WriteLine("3 - Sair");
+            Console.WriteLine("");
+
+            switch (Console.ReadKey().Key)
+            {
+                case ConsoleKey.D1:
+                case ConsoleKey.NumPad1:
+                    Console.Clear();
+                    _gameService.Start(GetPlayerName());
+                    continue;
+                case ConsoleKey.D2:
+                case ConsoleKey.NumPad2:
+                    Console.Clear();
+                    PrintRanking();
+                    continue;
+                case ConsoleKey.D3:
+                case ConsoleKey.NumPad3:
+                    return;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Opção inválida!");
+                    Console.WriteLine("");
+                    continue;
+            }
+        }
     }
 
     private static void PrintQuestion(QuestionModel question)
@@ -77,6 +96,59 @@ internal class Program
         Console.WriteLine();
         Console.WriteLine($"{args.PlayerName} até agora você ganhou {args.CurrentAward:C}.");
         Console.WriteLine();
+    }
+
+    private static void PrintRanking()
+    {
+        const int widthColumn1 = 20;
+        const int widthColumn2 = 12;
+        const int widthColumn3 = 11;
+        const int widthColumn4 = 20;
+
+        string Repeat(char c, int count) => new(c, count);
+
+        void PrintHeader()
+        {
+            var template = "|{0}|{1}|{2}|{3}|";
+
+            var header = string.Format(
+                template,
+                "Jogador".PadRight(widthColumn1),
+                "Qtde. Ajuda".PadRight(widthColumn2),
+                "Qtde. Pulo".PadRight(widthColumn3),
+                "Prêmio".PadRight(widthColumn4));
+
+            Console.WriteLine(header);
+        }
+
+        void PrintDivider()
+        {
+            var template = "+{0}+{1}+{2}+{3}+";
+
+            var divider = string.Format(
+                template,
+                Repeat('-', widthColumn1),
+                Repeat('-', widthColumn2),
+                Repeat('-', widthColumn3),
+                Repeat('-', widthColumn4));
+
+            Console.WriteLine(divider);
+        }
+
+        PrintDivider();
+        PrintHeader();
+        PrintDivider();
+
+        foreach (var ranking in _gameService.GetTopFiveRaknking())
+            Console.WriteLine(ranking.ToString(
+                widthColumn1, widthColumn2, widthColumn3, widthColumn4));
+
+        PrintDivider();
+
+        Console.WriteLine("");
+        Console.Write("Pressione qualquer tecla para voltar ao menu principal...");
+        Console.ReadLine();
+        Console.Clear();
     }
 
     #endregion
@@ -123,8 +195,8 @@ internal class Program
 
             if (!args.CallHelp)
             {
-                backgroundSongService.PlayQuestionSelection();
-                backgroundSongService.PlayThriller();
+                _backgroundSongService.PlayQuestionSelection();
+                _backgroundSongService.PlayThriller();
             }
 
             PrintHeader(args);
@@ -136,7 +208,7 @@ internal class Program
             {
                 string optionSelected = Console.ReadLine() ?? string.Empty;
 
-                if (!gameService.IsValidOption(
+                if (!_gameService.IsValidOption(
                     optionSelected, args.CallHelp, out var message))
                 {
                     Console.Clear();
@@ -176,6 +248,8 @@ internal class Program
                     break;
                 case GameOverReason.Won:
                     Console.WriteLine($"Parabéns! Você acertou todas as perguntas e ganhou {args.Award:C}!");
+                    Console.WriteLine("");
+                    PrintRanking();
                     break;
             }
         };
@@ -197,7 +271,7 @@ internal class Program
     {
         Console.Write("Digite o seu nome: ");
 
-        string name;
+        string? name;
 
         while (true)
         {

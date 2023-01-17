@@ -12,7 +12,9 @@ using WhoWantsToBeAMillionaire.Data.Repositories;
 
 public class Program
 {
-    private static readonly BackgroundSongService _backgroundSongService = new(new SoundPlayer());
+    private static readonly BackgroundSongService _backgroundSongService = new BackgroundSongService(
+        new SoundPlayerService(new SoundPlayer()));
+
     private static readonly GameService _gameService = ConfigGame();
 
     //TODO: configurar DpUp para rodar as migrations

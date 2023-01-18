@@ -237,23 +237,24 @@ public class Program
         {
             Console.Clear();
 
-            //TODO: tocar uma música diferente ao terminar o jogo
-
             switch (args.GameOverReason)
             {
                 case GameOverReason.Lost:
                     Console.WriteLine($"Resposta errada! Você ganhou {args.Award:C}!");
                     break;
                 case GameOverReason.Stopped:
-                    Console.Clear();
                     Console.WriteLine($"Você decidiu parar e ganhou {args.Award:C}!");
                     break;
                 case GameOverReason.Won:
                     Console.WriteLine($"Parabéns! Você acertou todas as perguntas e ganhou {args.Award:C}!");
-                    Console.WriteLine("");
-                    PrintRanking();
                     break;
             }
+
+            _backgroundSongService.PlayGameOver();
+
+            Console.Clear();
+
+            _backgroundSongService.PlayOpening();
         };
 
         return game;

@@ -5,6 +5,7 @@ namespace WhoWantsToBeAMillionaire.Core.Services;
 public class BackgroundSongService
 {
     private readonly ISoundPlayerService _soundPlayer;
+
     public string? CurrentSoundLocation { get; private set; }
 
     private static string BasePath
@@ -36,9 +37,11 @@ public class BackgroundSongService
         Thread.Sleep(TimeSpan.FromSeconds(delay));
     }
 
-    public void PlayGameOver()
+    public void PlayGameOver(int delay = 5)
     {
-        SetSoundLocation(string.Format(BasePath, "abertura.wav"));
+        SetSoundLocation(string.Format(BasePath, "game-over.wav"));
         _soundPlayer.Play();
+
+        Thread.Sleep(TimeSpan.FromSeconds(delay));
     }
 }

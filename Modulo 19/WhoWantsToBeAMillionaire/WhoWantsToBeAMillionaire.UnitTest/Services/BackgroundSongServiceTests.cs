@@ -56,6 +56,18 @@ namespace WhoWantsToBeAMillionaire.UnitTest.Services
             _soundPlayer.Verify(v => v.Play(), Times.Once);
         }
 
+        [Fact(DisplayName = "Dada uma música, quando der play na música de encerramento então deve ter sucesso.")]
+        public void GivenASong_WhenPlaySongGameOver_ThenShouldSuccess()
+        {
+            // arrange
+            const string songName = "game-over.wav";
 
+            // act
+            _backgroundService.PlayGameOver(0);
+
+            // assert
+            Assert.EndsWith(songName, _backgroundService.CurrentSoundLocation);
+            _soundPlayer.Verify(v => v.Play(), Times.Once);
+        }
     }
 }

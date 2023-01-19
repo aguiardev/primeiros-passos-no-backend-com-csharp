@@ -7,11 +7,6 @@ public class GameOverArgs : EventArgs
 	public GameOverReason GameOverReason;
     public decimal Award;
 
-    public GameOverArgs()
-	{
-
-	}
-
 	public GameOverArgs(GameOverReason gameOverReason, decimal award)
 	{
         GameOverReason = gameOverReason;

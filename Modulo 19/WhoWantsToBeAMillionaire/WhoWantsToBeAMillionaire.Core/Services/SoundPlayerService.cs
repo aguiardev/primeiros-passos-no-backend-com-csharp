@@ -1,8 +1,10 @@
-﻿using System.Media;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Media;
 using WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Core.Services;
 
+[ExcludeFromCodeCoverage]
 public class SoundPlayerService : ISoundPlayerService
 {
     private readonly SoundPlayer _soundPlayer;

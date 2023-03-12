@@ -4,5 +4,5 @@ namespace WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 
 public interface IAwardService
 {
-    List<AwardModel> GetAll();
+    List<AwardsModel> GetAll();
 }

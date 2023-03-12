@@ -30,7 +30,7 @@ public class GameServiceTests
         const int helpCount = 3;
         const int skipCount = 3;
 
-        var emptyAwardList = new List<AwardModel>();
+        var emptyAwardList = new List<AwardsModel>();
 
         _awardService.Setup(s => s.GetAll()).Returns(emptyAwardList);
 
@@ -50,15 +50,15 @@ public class GameServiceTests
     {
         // arrange
         const string playerName = "Silvio";
-        var awardList = new List<AwardModel>()
+        var awardList = new List<AwardsModel>()
         {
-            new AwardModel(1, 1000, 0, 0),
-            new AwardModel(2, 2000, 1000, 500),
+            new AwardsModel(1, 1000, 0, 0),
+            new AwardsModel(2, 2000, 1000, 500),
         };
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
 
-        var emptyQuestionList = new List<QuestionModel>();
+        var emptyQuestionList = new List<QuestionsModel>();
 
         _questionService.Setup(s => s.GetAll()).Returns(emptyQuestionList);
 
@@ -77,17 +77,17 @@ public class GameServiceTests
         const int helpCount = 3;
         const int skipCount = 3;
 
-        var awardList = new List<AwardModel>()
+        var awardList = new List<AwardsModel>()
         {
-            new AwardModel(1, 1000, 0, 0),
-            new AwardModel(2, 2000, 1000, 500),
+            new AwardsModel(1, 1000, 0, 0),
+            new AwardsModel(2, 2000, 1000, 500),
         };
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
 
-        var questionList = new List<QuestionModel>()
+        var questionList = new List<QuestionsModel>()
         {
-            new QuestionModel(
+            new QuestionsModel(
                 1,
                 "Qual a capital da China?",
                 new List<OptionsModel>()
@@ -97,7 +97,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Taiwan", false),
                     new OptionsModel(4, "Brasilia", false)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 2,
                 "Qual o nome do terceiro planeta do sistema solar?",
                 new List<OptionsModel>()
@@ -129,17 +129,17 @@ public class GameServiceTests
         const int helpCount = 3;
         const int skipCount = 3;
 
-        var awardList = new List<AwardModel>()
+        var awardList = new List<AwardsModel>()
         {
-            new AwardModel(1, 1000, 0, 0),
-            new AwardModel(2, 2000, 1000, 500),
+            new AwardsModel(1, 1000, 0, 0),
+            new AwardsModel(2, 2000, 1000, 500),
         };
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
 
-        var questionList = new List<QuestionModel>()
+        var questionList = new List<QuestionsModel>()
         {
-            new QuestionModel(
+            new QuestionsModel(
                 1,
                 "Qual a capital da China?",
                 new List<OptionsModel>()
@@ -172,21 +172,21 @@ public class GameServiceTests
         const int helpCount = 3;
         const int skipCount = 3;
 
-        var awardList = new List<AwardModel>()
+        var awardList = new List<AwardsModel>()
         {
-            new AwardModel(1, 1000, 0, 0),
-            new AwardModel(2, 2000, 1000, 500),
-            new AwardModel(3, 3000, 2000, 1000),
-            new AwardModel(4, 4000, 3000, 1500)
+            new AwardsModel(1, 1000, 0, 0),
+            new AwardsModel(2, 2000, 1000, 500),
+            new AwardsModel(3, 3000, 2000, 1000),
+            new AwardsModel(4, 4000, 3000, 1500)
         };
 
         var expectedAward = awardList.Max(m => m.Correct);
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
 
-        var questionList = new List<QuestionModel>()
+        var questionList = new List<QuestionsModel>()
         {
-            new QuestionModel(
+            new QuestionsModel(
                 1,
                 "Qual a capital da China?",
                 new List<OptionsModel>()
@@ -196,7 +196,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Taiwan", false),
                     new OptionsModel(4, "Brasilia", false)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 2,
                 "Qual o nome do terceiro planeta do sistema solar?",
                 new List<OptionsModel>()
@@ -206,7 +206,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Terra", true),
                     new OptionsModel(4, "Mercúrio", false)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 3,
                 "Qual o ponto mais alto do Brasil?",
                 new List<OptionsModel>()
@@ -216,7 +216,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Pico 31 de Março", false),
                     new OptionsModel(4, "Pico da Neblina", true)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 4,
                 "Qual o dia da independência nos EUA?",
                 new List<OptionsModel>()
@@ -292,21 +292,21 @@ public class GameServiceTests
         const int helpCount = 3;
         const int skipCount = 3;
 
-        var awardList = new List<AwardModel>()
+        var awardList = new List<AwardsModel>()
         {
-            new AwardModel(1, 1000, 0, 0),
-            new AwardModel(2, 2000, 1000, 500),
-            new AwardModel(3, 3000, 2000, 1000),
-            new AwardModel(4, 4000, 3000, 1500)
+            new AwardsModel(1, 1000, 0, 0),
+            new AwardsModel(2, 2000, 1000, 500),
+            new AwardsModel(3, 3000, 2000, 1000),
+            new AwardsModel(4, 4000, 3000, 1500)
         };
 
         var expectedAward = 0m;
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
 
-        var questionList = new List<QuestionModel>()
+        var questionList = new List<QuestionsModel>()
         {
-            new QuestionModel(
+            new QuestionsModel(
                 1,
                 "Qual a capital da China?",
                 new List<OptionsModel>()
@@ -316,7 +316,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Taiwan", false),
                     new OptionsModel(4, "Brasilia", false)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 2,
                 "Qual o nome do terceiro planeta do sistema solar?",
                 new List<OptionsModel>()
@@ -326,7 +326,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Terra", true),
                     new OptionsModel(4, "Mercúrio", false)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 3,
                 "Qual o ponto mais alto do Brasil?",
                 new List<OptionsModel>()
@@ -336,7 +336,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Pico 31 de Março", false),
                     new OptionsModel(4, "Pico da Neblina", true)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 4,
                 "Qual o dia da independência nos EUA?",
                 new List<OptionsModel>()
@@ -390,9 +390,9 @@ public class GameServiceTests
         const int skipCount = 3;
         const int helpCountExpected = 2;
 
-        var awardList = new List<AwardModel>()
+        var awardList = new List<AwardsModel>()
         {
-            new AwardModel(1, 1000, 0, 0),
+            new AwardsModel(1, 1000, 0, 0),
             //new AwardModel(2, 2000m, 1000m, 500m),
             //new AwardModel(3, 3000m, 2000m, 1000m),
             //new AwardModel(4, 4000m, 3000m, 1500m)
@@ -402,9 +402,9 @@ public class GameServiceTests
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
 
-        var questionList = new List<QuestionModel>()
+        var questionList = new List<QuestionsModel>()
         {
-            new QuestionModel(
+            new QuestionsModel(
                 1,
                 "Qual a capital da China?",
                 new List<OptionsModel>()
@@ -414,7 +414,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Taiwan", false),
                     new OptionsModel(4, "Brasilia", false)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 2,
                 "Qual o nome do terceiro planeta do sistema solar?",
                 new List<OptionsModel>()
@@ -424,7 +424,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Terra", true),
                     new OptionsModel(4, "Mercúrio", false)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 3,
                 "Qual o ponto mais alto do Brasil?",
                 new List<OptionsModel>()
@@ -434,7 +434,7 @@ public class GameServiceTests
                     new OptionsModel(3, "Pico 31 de Março", false),
                     new OptionsModel(4, "Pico da Neblina", true)
                 }),
-            new QuestionModel(
+            new QuestionsModel(
                 4,
                 "Qual o dia da independência nos EUA?",
                 new List<OptionsModel>()
@@ -458,7 +458,7 @@ public class GameServiceTests
         var onNextQuestionRaisesCountExpected = awardList.Count + 1;
         var onNextQuestionRaisesCountActual = 0;
 
-        QuestionModel question = null, question2 = null;
+        QuestionsModel question = null, question2 = null;
 
         _gameService.OnNextQuestion += (sender, args) =>
         {

@@ -67,7 +67,7 @@ public class Program
         }
     }
 
-    private static void PrintQuestion(QuestionModel question)
+    private static void PrintQuestion(QuestionsModel question)
     {
         Console.WriteLine($"Pergunta {question.Number}: {question.Description}");
         Console.WriteLine();
@@ -171,7 +171,7 @@ public class Program
         var optionsRepository = new OptionsRepository(connection);
         var rankingRepository = new RankingRepository(connection);
 
-        var questionService = new QuestionService(optionsRepository, questionRepository);
+        var questionService = new QuestionsService(optionsRepository, questionRepository);
         var awardService = new AwardService(awardRepository);
         var rankingService = new RankingService(rankingRepository);
 

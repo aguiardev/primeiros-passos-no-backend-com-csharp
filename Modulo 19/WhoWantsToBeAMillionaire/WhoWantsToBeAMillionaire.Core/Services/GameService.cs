@@ -16,8 +16,8 @@ public class GameService
     private bool _callStop;
     private bool _isValidOption;
     private GameOverReason _gameOverReason;
-    private List<AwardModel> _awards;
-    private List<QuestionModel> _questions;
+    private List<AwardsModel> _awards;
+    private List<QuestionsModel> _questions;
     private readonly string[] _validOption = new string[]
     {
         Constants.OPTION_ONE,
@@ -166,7 +166,7 @@ public class GameService
         return true;
     }
 
-    private bool IsCorrect(QuestionModel question)
+    private bool IsCorrect(QuestionsModel question)
         => _isValidOption && question.Options[_indexSelectedOption].IsCorrect;
 
     private void RemoveWrongOptionRandomly(List<OptionsModel> options)
@@ -194,7 +194,7 @@ public class GameService
 
     private int GetQuestioNumber() => _awardIndex + 1;
 
-    private bool NextQuestion(out QuestionModel? question, out AwardModel? award)
+    private bool NextQuestion(out QuestionsModel? question, out AwardsModel? award)
     {
         if (_awardIndex > _awards.Count)
         {
@@ -222,7 +222,7 @@ public class GameService
 
     private bool IsFinalQuestion() => _awardIndex == _awards.Count - 1;
 
-    public List<RankingModel> GetTopFiveRaknking()
+    public List<RankingsModel> GetTopFiveRaknking()
         => _rankingService.GetTopFive();
 
     public void Start(string playerName)

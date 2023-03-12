@@ -1,4 +1,4 @@
-﻿CREATE TABLE Award
+CREATE TABLE Awards
 (
     Id INTEGER PRIMARY KEY,
     Correct INTEGER,
@@ -6,7 +6,7 @@
     Wrong INTEGER
 );
 
-INSERT INTO Award (Id, Correct, Stop, Wrong) VALUES
+INSERT INTO Awards (Id, Correct, Stop, Wrong) VALUES
 (1, 1000, 0, 0),
 (2, 2000, 1000, 500),
 (3, 3000, 2000, 1000),

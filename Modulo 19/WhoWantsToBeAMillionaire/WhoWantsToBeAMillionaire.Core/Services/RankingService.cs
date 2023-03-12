@@ -7,24 +7,24 @@ namespace WhoWantsToBeAMillionaire.Core.Services;
 
 public class RankingService : IRankingService
 {
-    private readonly IRankingRepository _rankingRepository;
+    private readonly IRankingsRepository _rankingRepository;
 
-    public RankingService(IRankingRepository rankingRepository)
+    public RankingService(IRankingsRepository rankingRepository)
         => _rankingRepository = rankingRepository;
 
-    public List<RankingModel> GetTopFive()
+    public List<RankingsModel> GetTopFive()
     {
         var ranking = _rankingRepository.GetAll();
 
         return ranking
-            .Select(s => new RankingModel(s.PlayerName, s.HelpCount, s.SkipCount, s.Award))
+            .Select(s => new RankingsModel(s.PlayerName, s.HelpCount, s.SkipCount, s.Award))
             .ToList();
     }
 
     //TODO: adicionar campo de data hora da partida
     public bool Create(string playerName, int helpCount, int skipCount, int award)
     {
-        var ranking = new Ranking()
+        var ranking = new Rankings()
         {
             PlayerName = playerName,
             HelpCount = helpCount,

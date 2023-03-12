@@ -2,7 +2,8 @@
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
-public interface IAwardRepository
+public interface IRankingsRepository
 {
-    List<Award> GetAll();
+    List<Rankings> GetAll();
+    bool Create(Rankings ranking);
 }

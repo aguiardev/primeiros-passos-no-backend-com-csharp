@@ -4,5 +4,5 @@ namespace WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 
 public interface IQuestionService
 {
-    List<QuestionModel> GetAll();
+    List<QuestionsModel> GetAll();
 }

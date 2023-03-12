@@ -1,13 +1,13 @@
 ﻿namespace WhoWantsToBeAMillionaire.Core.Models;
 
-public class RankingModel
+public class RankingsModel
 {
     public string PlayerName { get; set; }
     public int HelpCount { get; set; }
     public int SkipCount { get; set; }
     public int Award { get; set; }
 
-    public RankingModel(string playerName, int helpCount, int skipCount, int award)
+    public RankingsModel(string playerName, int helpCount, int skipCount, int award)
     {
         PlayerName = playerName;
         HelpCount = helpCount;

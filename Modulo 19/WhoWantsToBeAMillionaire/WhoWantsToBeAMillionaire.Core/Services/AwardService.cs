@@ -7,12 +7,12 @@ namespace WhoWantsToBeAMillionaire.Core.Services;
 
 public class AwardService : IAwardService
 {
-    private readonly IAwardRepository _awardRepository;
+    private readonly IAwardsRepository _awardRepository;
 
-    public AwardService(IAwardRepository awardRepository)
+    public AwardService(IAwardsRepository awardRepository)
         => _awardRepository = awardRepository;
 
-    public List<AwardModel> GetAll()
+    public List<AwardsModel> GetAll()
     {
         var awards = _awardRepository.GetAll();
 
@@ -20,8 +20,8 @@ public class AwardService : IAwardService
     }
 
 
-    public static List<AwardModel> Parse(List<Award> awards)
+    public static List<AwardsModel> Parse(List<Awards> awards)
         => awards
-            .Select(award => new AwardModel(award.Id, award.Correct, award.Stop, award.Wrong))
+            .Select(award => new AwardsModel(award.Id, award.Correct, award.Stop, award.Wrong))
             .ToList();
 }

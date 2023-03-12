@@ -1,6 +1,6 @@
 ﻿namespace WhoWantsToBeAMillionaire.Data.Entities;
 
-public class Ranking
+public class Rankings
 {
     public int Id { get; set; }
     public string PlayerName { get; set; }

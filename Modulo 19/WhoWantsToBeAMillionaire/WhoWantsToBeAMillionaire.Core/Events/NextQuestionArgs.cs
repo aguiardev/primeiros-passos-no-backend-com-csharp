@@ -6,8 +6,8 @@ public class NextQuestionArgs : EventArgs
 {
     public string PlayerName { get; private set; }
     public decimal CurrentAward { get; private set; }
-    public QuestionModel Question { get; private set; }
-    public AwardModel Award { get; private set; }
+    public QuestionsModel Question { get; private set; }
+    public AwardsModel Award { get; private set; }
     public int SkipCount { get; private set; }
     public int HelpCount { get; private set; }
     public bool CallHelp { get; private set; }
@@ -15,8 +15,8 @@ public class NextQuestionArgs : EventArgs
     public NextQuestionArgs(
         string playerName,
         decimal currentAward,
-        QuestionModel question,
-        AwardModel award,
+        QuestionsModel question,
+        AwardsModel award,
         int skipCount,
         int helpCount,
         bool callHelp)

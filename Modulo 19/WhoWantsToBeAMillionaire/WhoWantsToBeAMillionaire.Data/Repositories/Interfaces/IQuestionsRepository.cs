@@ -2,7 +2,7 @@
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
-public interface IQuestionRepository
+public interface IQuestionsRepository
 {
-    List<Question> GetAll();
+    List<Questions> GetAll();
 }

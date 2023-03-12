@@ -5,18 +5,18 @@ using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Core.Services;
 
-public class QuestionService : IQuestionService
+public class QuestionsService : IQuestionService
 {
     private readonly IOptionsRepository _optionsRepository;
-    private readonly IQuestionRepository _questionRepository;
+    private readonly IQuestionsRepository _questionRepository;
 
-    public QuestionService(IOptionsRepository optionsRepository, IQuestionRepository questionRepository)
+    public QuestionsService(IOptionsRepository optionsRepository, IQuestionsRepository questionRepository)
     {
         _optionsRepository = optionsRepository;
         _questionRepository = questionRepository;
     }
 
-    public List<QuestionModel> GetAll()
+    public List<QuestionsModel> GetAll()
     {
         var questions = _questionRepository.GetAll();
         var options = _optionsRepository.GetAll();
@@ -24,9 +24,9 @@ public class QuestionService : IQuestionService
         return Parse(questions, options);
     }
 
-    public static List<QuestionModel> Parse(List<Question> questions, List<Options> options)
+    public static List<QuestionsModel> Parse(List<Questions> questions, List<Options> options)
     {
-        List<QuestionModel> questionsParsed = new();
+        List<QuestionsModel> questionsParsed = new();
         foreach (var question in questions)
         {
             var optionsParsed = options

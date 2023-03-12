@@ -4,7 +4,7 @@ using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories;
 
-public class RankingRepository : IRankingRepository
+public class RankingRepository : IRankingsRepository
 {
     private readonly IConnection _connection;
     private const string _querySql = @"  
@@ -24,22 +24,22 @@ public class RankingRepository : IRankingRepository
     public RankingRepository(IConnection connection)
         => _connection = connection;
 
-    public List<Ranking> GetAll()
+    public List<Rankings> GetAll()
     {
         try
         {
             using var connection = _connection.GetConnection();
             connection.Open();
 
-            return connection.Query<Ranking>(_querySql).ToList();
+            return connection.Query<Rankings>(_querySql).ToList();
         }
         catch (Exception ex)
         {
-            return new List<Ranking>();
+            return new List<Rankings>();
         }
     }
 
-    public bool Create(Ranking ranking)
+    public bool Create(Rankings ranking)
     {
         try
         {

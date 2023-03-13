@@ -192,7 +192,7 @@ public class GameService
         }
     }
 
-    private int GetQuestioNumber() => _awardIndex + 1;
+    private int GetQuestionNumber() => _awardIndex + 1;
 
     private bool NextQuestion(out QuestionsModel? question, out AwardsModel? award)
     {
@@ -214,7 +214,7 @@ public class GameService
             _questionIndex++;
         }
 
-        question.Number = GetQuestioNumber();
+        question.Number = GetQuestionNumber();
         award = _awards[_awardIndex];
 
         return true;

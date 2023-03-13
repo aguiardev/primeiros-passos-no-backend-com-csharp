@@ -100,6 +100,7 @@ public class Program
         Console.WriteLine();
     }
 
+    //TODO: transformar numa classe estática
     private static void PrintRanking()
     {
         const int widthColumn1 = 20;

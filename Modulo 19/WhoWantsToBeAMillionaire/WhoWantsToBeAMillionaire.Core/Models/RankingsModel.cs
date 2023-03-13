@@ -2,6 +2,7 @@
 
 public class RankingsModel
 {
+    private const string template = "|{0}|{1}|{2}|{3}|";
     public string PlayerName { get; set; }
     public int HelpCount { get; set; }
     public int SkipCount { get; set; }
@@ -15,16 +16,11 @@ public class RankingsModel
         Award = award;
     }
 
-    public string ToString(
-        int widthPlayerName, int widthHelpCount, int widthSkipCount, int widthAward)
-    {
-        var template = "|{0}|{1}|{2}|{3}|";
-
-        return string.Format(
+    public string ToString(int widthPlayerName, int widthHelpCount, int widthSkipCount, int widthAward)
+        => string.Format(
             template,
             PlayerName.PadRight(widthPlayerName),
             HelpCount.ToString().PadRight(widthHelpCount),
             SkipCount.ToString().PadRight(widthSkipCount),
             Award.ToString().PadRight(widthAward));
-    }
 }

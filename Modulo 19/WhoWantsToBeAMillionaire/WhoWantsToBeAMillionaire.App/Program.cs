@@ -106,15 +106,15 @@ public class Program
         const int widthColumn2 = 12;
         const int widthColumn3 = 11;
         const int widthColumn4 = 20;
+        const string templateHeader = "|{0}|{1}|{2}|{3}|";
+        const string templateDivider = "+{0}+{1}+{2}+{3}+";
 
         string Repeat(char c, int count) => new(c, count);
 
         void PrintHeader()
         {
-            var template = "|{0}|{1}|{2}|{3}|";
-
             var header = string.Format(
-                template,
+                templateHeader,
                 "Jogador".PadRight(widthColumn1),
                 "Qtde. Ajuda".PadRight(widthColumn2),
                 "Qtde. Pulo".PadRight(widthColumn3),
@@ -125,10 +125,8 @@ public class Program
 
         void PrintDivider()
         {
-            var template = "+{0}+{1}+{2}+{3}+";
-
             var divider = string.Format(
-                template,
+                templateDivider,
                 Repeat('-', widthColumn1),
                 Repeat('-', widthColumn2),
                 Repeat('-', widthColumn3),

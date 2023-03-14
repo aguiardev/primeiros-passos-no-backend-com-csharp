@@ -4,7 +4,7 @@ using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories;
 
-public class RankingRepository : IRankingsRepository
+public class RankingsRepository : IRankingsRepository
 {
     private readonly IConnection _connection;
     private const string _querySql = @"  
@@ -14,14 +14,14 @@ public class RankingRepository : IRankingsRepository
                        , PlayerName
                        , HelpCount
                        , SkipCount
-                    FROM RANKING)
+                    FROM RANKINGS)
         ORDER BY Award DESC, Help, PlayerName LIMIT 5";
     
-    private const string _queryInsert = @"INSERT INTO RANKING
+    private const string _queryInsert = @"INSERT INTO RANKINGS
         (PLAYERNAME, HELPCOUNT, SKIPCOUNT, AWARD) VALUES
         (@PlayerName, @HelpCount, @SkipCount, @Award)";
 
-    public RankingRepository(IConnection connection)
+    public RankingsRepository(IConnection connection)
         => _connection = connection;
 
     public List<Rankings> GetAll()

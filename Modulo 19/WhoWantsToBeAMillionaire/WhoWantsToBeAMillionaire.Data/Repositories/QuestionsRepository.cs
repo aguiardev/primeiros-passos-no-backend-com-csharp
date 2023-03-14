@@ -4,26 +4,26 @@ using WhoWantsToBeAMillionaire.Data.Repositories.Interfaces;
 
 namespace WhoWantsToBeAMillionaire.Data.Repositories;
 
-public class AwardRepository : IAwardsRepository
+public class QuestionsRepository : IQuestionsRepository
 {
     private readonly IConnection _connection;
-    private const string _query = "SELECT ID, CORRECT, STOP, WRONG FROM AWARD";
+    private const string _query = "SELECT ID, DESCRIPTION FROM QUESTIONS";
 
-    public AwardRepository(IConnection connection)
+    public QuestionsRepository(IConnection connection)
         => _connection = connection;
 
-    public List<Awards> GetAll()
+    public List<Questions> GetAll()
     {
         try
         {
             using var connection = _connection.GetConnection();
             connection.Open();
 
-            return connection.Query<Awards>(_query).ToList();
+            return connection.Query<Questions>(_query).ToList();
         }
         catch (Exception ex)
         {
-            return new List<Awards>();
+            return new List<Questions>();
         }
     }
 }

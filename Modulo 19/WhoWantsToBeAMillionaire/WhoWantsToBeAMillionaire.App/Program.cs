@@ -164,10 +164,10 @@ public class Program
 
         var connection = new Connection(settings.ConnectionString);
 
-        var awardRepository = new AwardRepository(connection);
-        var questionRepository = new QuestionRepository(connection);
+        var awardRepository = new AwardsRepository(connection);
+        var questionRepository = new QuestionsRepository(connection);
         var optionsRepository = new OptionsRepository(connection);
-        var rankingRepository = new RankingRepository(connection);
+        var rankingRepository = new RankingsRepository(connection);
 
         var questionService = new QuestionsService(optionsRepository, questionRepository);
         var awardService = new AwardService(awardRepository);

@@ -22,12 +22,11 @@ public class RankingService : IRankingService
     }
 
     //TODO: adicionar campo de data hora da partida
-    public bool Create(string playerName, int helpCount, int skipCount, int award)
+    public bool Create(string playerName, int skipCount, int award)
     {
         var ranking = new Rankings()
         {
             PlayerName = playerName,
-            HelpCount = helpCount,
             SkipCount = skipCount,
             Award = award
         };

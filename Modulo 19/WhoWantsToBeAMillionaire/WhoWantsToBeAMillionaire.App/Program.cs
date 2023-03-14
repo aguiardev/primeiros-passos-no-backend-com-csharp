@@ -90,9 +90,8 @@ public class Program
 
         Console.WriteLine($"Acertar: {args.Award.Correct:C} - Parar: {args.Award.Stop:C} - Errar: {args.Award.Wrong:C}");
         Console.WriteLine();
-        Console.WriteLine($"Você tem {args.SkipCount} pulos e {args.HelpCount} pedidos de ajuda.");
+        Console.WriteLine($"Você pode pular {args.SkipCount} perguntas");
         Console.WriteLine();
-        Console.WriteLine($">> Digite [{Constants.HELP}] para ajuda.");
         Console.WriteLine($">> Digite [{Constants.SKIP}] para pular.");
         Console.WriteLine($">> Digite [{Constants.STOP}] para parar.");
         Console.WriteLine();
@@ -177,7 +176,6 @@ public class Program
         var game = new GameService(
             questionService,
             awardService,
-            settings.HelpCount,
             settings.SkipCount,
             rankingService);
 
@@ -194,11 +192,8 @@ public class Program
         {
             Console.Clear();
 
-            if (!args.CallHelp)
-            {
-                _backgroundSongService.PlayQuestionSelection();
-                _backgroundSongService.PlayThriller();
-            }
+            _backgroundSongService.PlayQuestionSelection();
+            _backgroundSongService.PlayThriller();
 
             PrintHeader(args);
             PrintQuestion(args.Question);
@@ -209,8 +204,7 @@ public class Program
             {
                 string optionSelected = Console.ReadLine() ?? string.Empty;
 
-                if (!_gameService.IsValidOption(
-                    optionSelected, args.CallHelp, out var message))
+                if (!_gameService.IsValidOption(optionSelected, out var message))
                 {
                     Console.Clear();
                     Console.WriteLine(message);

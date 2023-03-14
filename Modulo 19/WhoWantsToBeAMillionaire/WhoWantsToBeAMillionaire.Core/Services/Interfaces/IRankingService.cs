@@ -5,5 +5,5 @@ namespace WhoWantsToBeAMillionaire.Core.Services.Interfaces;
 public interface IRankingService
 {
     List<RankingsModel> GetTopFive();
-    bool Create(string playerName, int helpCount, int skipCount, int award);
+    bool Create(string playerName, int skipCount, int award);
 }

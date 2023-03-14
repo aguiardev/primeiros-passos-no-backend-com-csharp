@@ -28,7 +28,6 @@ public class GameServiceTests
         // arrange
         const string playerName = "Silvio";
         const int helpCount = 3;
-        const int skipCount = 3;
 
         var emptyAwardList = new List<AwardsModel>();
 
@@ -38,7 +37,6 @@ public class GameServiceTests
             _questionService.Object,
             _awardService.Object,
             helpCount, 
-            skipCount,
             _rankingService.Object);
 
         // assert
@@ -63,7 +61,7 @@ public class GameServiceTests
         _questionService.Setup(s => s.GetAll()).Returns(emptyQuestionList);
 
         _gameService = new GameService(
-            _questionService.Object, _awardService.Object, 3, 3, _rankingService.Object);
+            _questionService.Object, _awardService.Object, 3, _rankingService.Object);
 
         // assert
         Assert.Throws<QuestionListNotFoundException>(() => _gameService.Start(playerName));
@@ -75,7 +73,6 @@ public class GameServiceTests
         // arrange
         const string playerName = "Silvio";
         const int helpCount = 3;
-        const int skipCount = 3;
 
         var awardList = new List<AwardsModel>()
         {
@@ -114,7 +111,6 @@ public class GameServiceTests
             _questionService.Object,
             _awardService.Object,
             helpCount,
-            skipCount,
             _rankingService.Object);
 
         // assert
@@ -127,7 +123,6 @@ public class GameServiceTests
         // arrange
         const string playerName = "Silvio";
         const int helpCount = 3;
-        const int skipCount = 3;
 
         var awardList = new List<AwardsModel>()
         {
@@ -157,7 +152,6 @@ public class GameServiceTests
             _questionService.Object,
             _awardService.Object,
             helpCount,
-            skipCount,
             _rankingService.Object);
 
         // assert
@@ -169,7 +163,6 @@ public class GameServiceTests
     {
         // arrange
         const string playerName = "Silvio";
-        const int helpCount = 3;
         const int skipCount = 3;
 
         var awardList = new List<AwardsModel>()
@@ -233,7 +226,6 @@ public class GameServiceTests
         _gameService = new GameService(
             _questionService.Object,
             _awardService.Object,
-            helpCount,
             skipCount,
             _rankingService.Object);
 
@@ -248,7 +240,7 @@ public class GameServiceTests
                 .Number
                 .ToString();
 
-            isValidOption = _gameService.IsValidOption(correctOption, args.CallHelp, out _);
+            isValidOption = _gameService.IsValidOption(correctOption, out _);
         };
 
         // act
@@ -261,7 +253,6 @@ public class GameServiceTests
         Assert.NotNull(receivedEvent);
         Assert.Equal(GameOverReason.Won, receivedEvent.Arguments.GameOverReason);
         Assert.Equal(skipCount, _gameService.SkipCount);
-        Assert.Equal(helpCount, _gameService.HelpCount);
         Assert.Equal(expectedAward, _gameService.CurrentAward);
         Assert.True(isValidOption);
     }
@@ -289,7 +280,6 @@ public class GameServiceTests
     {
         // arrange
         const string playerName = "Silvio";
-        const int helpCount = 3;
         const int skipCount = 3;
 
         var awardList = new List<AwardsModel>()
@@ -353,7 +343,6 @@ public class GameServiceTests
         _gameService = new GameService(
             _questionService.Object,
             _awardService.Object,
-            helpCount,
             skipCount,
             _rankingService.Object);
 
@@ -361,7 +350,7 @@ public class GameServiceTests
 
         _gameService.OnNextQuestion += (sender, args) =>
         {
-            isValidOption = _gameService.IsValidOption(invalidOption, args.CallHelp, out _);
+            isValidOption = _gameService.IsValidOption(invalidOption, out _);
         };
 
         // act
@@ -374,137 +363,7 @@ public class GameServiceTests
         Assert.NotNull(receivedEvent);
         Assert.Equal(GameOverReason.Lost, receivedEvent.Arguments.GameOverReason);
         Assert.Equal(skipCount, _gameService.SkipCount);
-        Assert.Equal(helpCount, _gameService.HelpCount);
         Assert.Equal(expectedAward, _gameService.CurrentAward);
         Assert.False(isValidOption);
-    }
-
-    //TODO: fazer teste pulando a primeira, segunda, terceira e última pergunta.
-    //[Fact(Skip = "Incompleto", DisplayName = "Dado o início do jogo, quando o jogador pedir ajuda uma opção errada deverá ser removida.")]
-    [Fact(DisplayName = "Dado o início do jogo, quando o jogador pedir ajuda uma opção errada deverá ser removida.")]
-    public void GivenTheBeginningOfTheGame_WhenThePlayerCallForHelp_AWrongOptionShouldBeRemoved()
-    {
-        // arrange
-        const string playerName = "Silvio";
-        const int helpCount = 3;
-        const int skipCount = 3;
-        const int helpCountExpected = 2;
-
-        var awardList = new List<AwardsModel>()
-        {
-            new AwardsModel(1, 1000, 0, 0),
-            //new AwardModel(2, 2000m, 1000m, 500m),
-            //new AwardModel(3, 3000m, 2000m, 1000m),
-            //new AwardModel(4, 4000m, 3000m, 1500m)
-        };
-
-        var expectedAward = awardList.Max(m => m.Correct);
-
-        _awardService.Setup(s => s.GetAll()).Returns(awardList);
-
-        var questionList = new List<QuestionsModel>()
-        {
-            new QuestionsModel(
-                1,
-                "Qual a capital da China?",
-                new List<OptionsModel>()
-                {
-                    new OptionsModel(1, "Kyoto", false),
-                    new OptionsModel(2, "Pequim", true),
-                    new OptionsModel(3, "Taiwan", false),
-                    new OptionsModel(4, "Brasilia", false)
-                }),
-            new QuestionsModel(
-                2,
-                "Qual o nome do terceiro planeta do sistema solar?",
-                new List<OptionsModel>()
-                {
-                    new OptionsModel(1, "Marte", false),
-                    new OptionsModel(2, "Plutão", false),
-                    new OptionsModel(3, "Terra", true),
-                    new OptionsModel(4, "Mercúrio", false)
-                }),
-            new QuestionsModel(
-                3,
-                "Qual o ponto mais alto do Brasil?",
-                new List<OptionsModel>()
-                {
-                    new OptionsModel(1, "Pico da Bandeira", false),
-                    new OptionsModel(2, "Pico do Calçado", false),
-                    new OptionsModel(3, "Pico 31 de Março", false),
-                    new OptionsModel(4, "Pico da Neblina", true)
-                }),
-            new QuestionsModel(
-                4,
-                "Qual o dia da independência nos EUA?",
-                new List<OptionsModel>()
-                {
-                    new OptionsModel(1, "23 de Março", false),
-                    new OptionsModel(2, "4 de Julho", true),
-                    new OptionsModel(3, "7 de Setembro", false),
-                    new OptionsModel(4, "15 de Novembro", false)
-                })
-        };
-
-        _questionService.Setup(s => s.GetAll()).Returns(questionList);
-
-        _gameService = new GameService(
-            _questionService.Object,
-            _awardService.Object,
-            helpCount,
-            skipCount,
-            _rankingService.Object);
-
-        var onNextQuestionRaisesCountExpected = awardList.Count + 1;
-        var onNextQuestionRaisesCountActual = 0;
-
-        QuestionsModel question = null, question2 = null;
-
-        _gameService.OnNextQuestion += (sender, args) =>
-        {
-            onNextQuestionRaisesCountActual++;
-
-            if (onNextQuestionRaisesCountActual == 2)
-            {
-                question2 = args.Question;
-
-                //TODO: encapsular
-                var correctOption = questionList
-                    .First(w => w.Id == args.Question.Id)
-                    .Options
-                    .First(w => w.IsCorrect)
-                    .Number
-                    .ToString();
-
-                _ = _gameService.IsValidOption(correctOption, args.CallHelp, out _);
-            }
-            else
-            {
-                question = args.Question;
-
-                _ = _gameService.IsValidOption(Constants.HELP, args.CallHelp, out _);
-            }
-        };
-
-        // act
-        var receivedEvent = Assert.Raises<GameOverArgs>(
-            a => _gameService.OnGameOver += a,
-            a => _gameService.OnGameOver -= a,
-            () => _gameService.Start(playerName));
-
-        // assert
-        Assert.NotNull(receivedEvent);
-        Assert.Equal(GameOverReason.Won, receivedEvent.Arguments.GameOverReason);
-        Assert.Equal(helpCountExpected, _gameService.HelpCount);
-        Assert.Equal(skipCount, _gameService.SkipCount);
-        Assert.Equal(expectedAward, _gameService.CurrentAward);
-        Assert.Equal(onNextQuestionRaisesCountExpected, onNextQuestionRaisesCountActual);
-
-        //Ser a mesma pergunta anterior
-        Assert.Equal(question.Id, question2.Id);
-        //Continuar com apenas uma opção correta
-        Assert.True(question2.Options.Count(c => c.IsCorrect) == 1);
-        //Ter somente uma opção oculta
-        Assert.True(question2.Options.Count(c => c.Hidden) == 1);
     }
 }

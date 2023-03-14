@@ -11,7 +11,6 @@ public class GameService
     private int _indexSelectedOption;
     private int _questionIndex;
     private int _awardIndex;
-    private bool _callHelp;
     private bool _callSkip;
     private bool _callStop;
     private bool _isValidOption;
@@ -24,7 +23,6 @@ public class GameService
         Constants.OPTION_TWO,
         Constants.OPTION_THREE,
         Constants.OPTION_FOUR,
-        Constants.HELP,
         Constants.STOP,
         Constants.SKIP
     };
@@ -34,7 +32,6 @@ public class GameService
 
     public string PlayerName { get; private set; }
     public int CurrentAward { get; private set; }
-    public int HelpCount { get; private set; }
     public int SkipCount { get; private set; }
 
     public event EventHandler<StartedArgs> OnStarted;
@@ -45,17 +42,15 @@ public class GameService
     public GameService(
         IQuestionService questionService,
         IAwardService awardService,
-        int helpCount,
         int skipCount,
         IRankingService rankingService)
     {
         _indexSelectedOption = -1;
         _questionIndex = _awardIndex = 0;
-        _callHelp = _callStop = _callSkip = _isValidOption = false;
+        _callStop = _callSkip = _isValidOption = false;
         _questionService = questionService;
         _awardService = awardService;
 
-        HelpCount = helpCount;
         SkipCount = skipCount;
         _rankingService = rankingService;
     }
@@ -86,16 +81,6 @@ public class GameService
         Shuffle(_questions);
     }
 
-    private bool CanHelp()
-    {
-        if (HelpCount <= 0)
-            return false;
-
-        _callHelp = true;
-        HelpCount--;
-        return true;
-    }
-
     private bool CanSkip()
     {
         if (SkipCount <= 0)
@@ -106,12 +91,11 @@ public class GameService
         return true;
     }
 
-    public bool IsValidOption(
-        string selectedOptionNumber, bool callHelpBefore, out string message)
+    public bool IsValidOption(string selectedOptionNumber, out string message)
     {
         message = string.Empty;
         
-        _callSkip = _callStop = _callHelp = _isValidOption = false;
+        _callSkip = _callStop = _isValidOption = false;
 
         if (!_validOption.Contains(selectedOptionNumber.Trim().ToUpper()))
         {
@@ -134,21 +118,7 @@ public class GameService
 
         if (_indexSelectedOption == -1)
         {
-            if (string.Equals(selectedOptionNumber, Constants.HELP, StringComparison.OrdinalIgnoreCase))
-            {
-                if (callHelpBefore)
-                {
-                    message = "Você só pode pedir ajuda uma vez por pergunta!";
-                    return false;
-                }
-
-                if (!CanHelp())
-                {
-                    message = "Você não pode mais pedir ajuda!";
-                    return false;
-                }
-            }
-            else if (string.Equals(selectedOptionNumber, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(selectedOptionNumber, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
             {
                 if (!CanSkip())
                 {
@@ -168,15 +138,6 @@ public class GameService
 
     private bool IsCorrect(QuestionsModel question)
         => _isValidOption && question.Options[_indexSelectedOption].IsCorrect;
-
-    private void RemoveWrongOptionRandomly(List<OptionsModel> options)
-    {
-        var wrongOptions = options.Where(w => !w.IsCorrect);
-
-        var removedElementIndex = new Random().Next(0, wrongOptions.Count());
-
-        wrongOptions.ElementAt(removedElementIndex).Hidden = true;
-    }
 
     private void Shuffle<T>(List<T> list)
     {
@@ -203,16 +164,9 @@ public class GameService
             return false;
         }
 
-        if (_callHelp)
-        {
-            question = _questions[_questionIndex - 1];
-        }
-        else
-        {
-            question = _questions[_questionIndex];
+        question = _questions[_questionIndex];
 
-            _questionIndex++;
-        }
+        _questionIndex++;
 
         question.Number = GetQuestionNumber();
         award = _awards[_awardIndex];
@@ -236,13 +190,7 @@ public class GameService
         while (NextQuestion(out var question, out var award))
         {
             OnNextQuestion?.Invoke(this, new NextQuestionArgs(
-                PlayerName, CurrentAward, question, award, SkipCount, HelpCount, _callHelp));
-
-            if (_callHelp)
-            {
-                RemoveWrongOptionRandomly(question.Options);
-                continue;
-            }
+                PlayerName, CurrentAward, question, award, SkipCount));
 
             if (_callSkip)
                 continue;
@@ -275,7 +223,7 @@ public class GameService
             }
         }
 
-        _rankingService.Create(playerName, HelpCount, SkipCount, CurrentAward);
+        _rankingService.Create(playerName, SkipCount, CurrentAward);
         OnGameOver?.Invoke(this, new GameOverArgs(_gameOverReason, CurrentAward));
     }
 }

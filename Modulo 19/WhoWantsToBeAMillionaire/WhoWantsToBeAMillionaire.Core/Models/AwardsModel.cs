@@ -6,15 +6,15 @@ namespace WhoWantsToBeAMillionaire.Core.Models;
 public class AwardsModel
 {
     public int QuestionNumber { get; private set; }
-    public int Correct { get; private set; }
+    public int RightAnswer { get; private set; }
     public int Stop { get; private set; }
-    public int Wrong { get; private set; }
+    public int WrongAnswer { get; private set; }
 
     public AwardsModel(int questioNumber, int correct, int stop, int wrong)
     {
         QuestionNumber = questioNumber;
-        Correct = correct;
+        RightAnswer = correct;
         Stop = stop;
-        Wrong = wrong;
+        WrongAnswer = wrong;
     }
 }

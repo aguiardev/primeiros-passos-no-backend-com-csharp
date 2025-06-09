@@ -173,7 +173,7 @@ public class GameServiceTests
             new AwardsModel(4, 4000, 3000, 1500)
         };
 
-        var expectedAward = awardList.Max(m => m.Correct);
+        var expectedAward = awardList.Max(m => m.RightAnswer);
 
         _awardService.Setup(s => s.GetAll()).Returns(awardList);
 

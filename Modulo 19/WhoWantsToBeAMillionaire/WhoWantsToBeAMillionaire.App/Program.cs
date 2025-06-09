@@ -88,7 +88,7 @@ public class Program
     private static void PrintHeader(NextQuestionArgs args)
     {
 
-        Console.WriteLine($"Acertar: {args.Award.Correct:C} - Parar: {args.Award.Stop:C} - Errar: {args.Award.Wrong:C}");
+        Console.WriteLine($"Acertar: {args.Award.RightAnswer:C} - Parar: {args.Award.Stop:C} - Errar: {args.Award.WrongAnswer:C}");
         Console.WriteLine();
         Console.WriteLine($"Você pode pular {args.SkipCount} perguntas");
         Console.WriteLine();
@@ -139,7 +139,7 @@ public class Program
         PrintHeader();
         PrintDivider();
 
-        foreach (var ranking in _gameService.GetTopFiveRaknking())
+        foreach (var ranking in _gameService.GetTopFiveRanking())
             Console.WriteLine(ranking.ToString(
                 widthColumn1, widthColumn2, widthColumn3, widthColumn4));
 

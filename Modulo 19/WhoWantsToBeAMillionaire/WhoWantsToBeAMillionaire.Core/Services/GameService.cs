@@ -91,44 +91,44 @@ public class GameService
         return true;
     }
 
-    public bool IsValidOption(string selectedOptionNumber, out string message)
+    public bool IsValidOption(string selectedOption, out string message)
     {
         message = string.Empty;
         
         _callSkip = _callStop = _isValidOption = false;
 
-        if (!_validOption.Contains(selectedOptionNumber.Trim().ToUpper()))
+        if (!_validOption.Contains(selectedOption.Trim().ToUpperInvariant()))
         {
             message = "Opção inválida! Tente novamente.";
             return false;
         }
 
-        if (selectedOptionNumber.Trim().ToUpper() is
+        _indexSelectedOption = -1;
+
+        if (selectedOption.Trim() is
             Constants.OPTION_ONE or
             Constants.OPTION_TWO or
             Constants.OPTION_THREE or
             Constants.OPTION_FOUR)
         {
-            _indexSelectedOption = int.Parse(selectedOptionNumber) - 1;
+            _indexSelectedOption = int.Parse(selectedOption) - 1;
         }
         else
         {
-            _indexSelectedOption = -1;
-        }
+            switch (selectedOption)
+            {
+                case Constants.SKIP:
+                    if (!CanSkip())
+                    {
+                        message = "Você não pode mais pular!";
+                        return false;
+                    }
+                    
+                    break;
+                case Constants.STOP:
+                    _callStop = true;
 
-        if (_indexSelectedOption == -1)
-        {
-            if (string.Equals(selectedOptionNumber, Constants.SKIP, StringComparison.OrdinalIgnoreCase))
-            {
-                if (!CanSkip())
-                {
-                    message = "Você não pode mais pular!";
-                    return false;
-                }
-            }
-            else if (string.Equals(selectedOptionNumber, Constants.STOP, StringComparison.OrdinalIgnoreCase))
-            {
-                _callStop = true;
+                    break;
             }
         }
 
@@ -136,7 +136,7 @@ public class GameService
         return true;
     }
 
-    private bool IsCorrect(QuestionsModel question)
+    private bool IsRightAnswer(QuestionsModel question)
         => _isValidOption && question.Options[_indexSelectedOption].IsCorrect;
 
     private void Shuffle<T>(List<T> list)
@@ -153,9 +153,9 @@ public class GameService
         }
     }
 
-    private int GetQuestionNumber() => _awardIndex + 1;
+    private int GetCurrentQuestionNumber() => _awardIndex + 1;
 
-    private bool NextQuestion(out QuestionsModel? question, out AwardsModel? award)
+    private bool TryGetNextQuestion(out QuestionsModel? question, out AwardsModel? award)
     {
         if (_awardIndex > _awards.Count)
         {
@@ -168,7 +168,7 @@ public class GameService
 
         _questionIndex++;
 
-        question.Number = GetQuestionNumber();
+        question.Number = GetCurrentQuestionNumber();
         award = _awards[_awardIndex];
 
         return true;
@@ -176,8 +176,7 @@ public class GameService
 
     private bool IsFinalQuestion() => _awardIndex == _awards.Count - 1;
 
-    public List<RankingsModel> GetTopFiveRaknking()
-        => _rankingService.GetTopFive();
+    public List<RankingsModel> GetTopFiveRanking() => _rankingService.GetTopFive();
 
     public void Start(string playerName)
     {
@@ -187,9 +186,9 @@ public class GameService
 
         OnStarted?.Invoke(this, new StartedArgs(PlayerName));
 
-        while (NextQuestion(out var question, out var award))
+        while (TryGetNextQuestion(out var question, out var award))
         {
-            OnNextQuestion?.Invoke(this, new NextQuestionArgs(
+            OnNextQuestion.Invoke(this, new NextQuestionArgs(
                 PlayerName, CurrentAward, question, award, SkipCount));
 
             if (_callSkip)
@@ -202,9 +201,9 @@ public class GameService
                 break;
             }
 
-            if (IsCorrect(question))
+            if (IsRightAnswer(question))
             {
-                CurrentAward = award.Correct;
+                CurrentAward = award.RightAnswer;
                 OnRightAnswer?.Invoke(this, new RightAnswerArgs());
                 
                 if (IsFinalQuestion())
@@ -217,7 +216,7 @@ public class GameService
             }
             else
             {
-                CurrentAward = award.Wrong;
+                CurrentAward = award.WrongAnswer;
                 _gameOverReason = GameOverReason.Lost;
                 break;
             }

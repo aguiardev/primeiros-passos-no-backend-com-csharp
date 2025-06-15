@@ -4,6 +4,10 @@ namespace WhoWantsToBeAMillionaire.Core.Services;
 
 public class BackgroundSongService
 {
+    private const string SONG_OPENNING = "abertura.wav";
+    private const string SONG_THRILLER = "suspense.wav";
+    private const string QUESTION_SELECTION = "selecao-perguntas.wav";
+    private const string SONG_GAME_OVER = "game-over.wav";
     private readonly ISoundPlayerService _soundPlayer;
 
     public string? CurrentSoundLocation { get; private set; }
@@ -15,23 +19,23 @@ public class BackgroundSongService
         => _soundPlayer = soundPlayer;
 
     private void SetSoundLocation(string soundLocation)
-        => _soundPlayer.SoundLocation = CurrentSoundLocation = soundLocation;
+        => _soundPlayer.SoundLocation = CurrentSoundLocation = string.Format(BasePath, soundLocation);
 
-    public void PlayOpening()
+    public void PlayOpenning()
     {
-        SetSoundLocation(string.Format(BasePath, "abertura.wav"));
+        SetSoundLocation(SONG_OPENNING);
         _soundPlayer.PlayLooping();
     }
 
     public void PlayThriller()
     {
-        SetSoundLocation(string.Format(BasePath, "suspense.wav"));
+        SetSoundLocation(SONG_THRILLER);
         _soundPlayer.PlayLooping();
     }
 
     public void PlayQuestionSelection(int delay = 3)
     {
-        SetSoundLocation(string.Format(BasePath, "selecao-perguntas.wav"));
+        SetSoundLocation(QUESTION_SELECTION);
         _soundPlayer.Play();
 
         Thread.Sleep(TimeSpan.FromSeconds(delay));
@@ -39,7 +43,7 @@ public class BackgroundSongService
 
     public void PlayGameOver(int delay = 5)
     {
-        SetSoundLocation(string.Format(BasePath, "game-over.wav"));
+        SetSoundLocation(SONG_GAME_OVER);
         _soundPlayer.Play();
 
         Thread.Sleep(TimeSpan.FromSeconds(delay));

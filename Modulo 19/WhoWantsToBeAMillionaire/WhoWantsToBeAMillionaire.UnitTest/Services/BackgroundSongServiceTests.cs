@@ -21,7 +21,7 @@ namespace WhoWantsToBeAMillionaire.UnitTest.Services
             const string songName = "abertura.wav";
 
             // act
-            _backgroundService.PlayOpening();
+            _backgroundService.PlayOpenning();
 
             // assert
             Assert.EndsWith(songName, _backgroundService.CurrentSoundLocation);

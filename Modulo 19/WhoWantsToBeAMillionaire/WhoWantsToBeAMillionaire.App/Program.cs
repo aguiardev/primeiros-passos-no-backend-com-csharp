@@ -30,7 +30,7 @@ public class Program
 
     private static void PrintMainMenu()
     {
-        _backgroundSongService.PlayOpening();
+        _backgroundSongService.PlayOpenning();
 
         while (true)
         {
@@ -247,7 +247,7 @@ public class Program
 
             Console.Clear();
 
-            _backgroundSongService.PlayOpening();
+            _backgroundSongService.PlayOpenning();
         };
 
         return game;

@@ -174,7 +174,7 @@ INSERT INTO Options (Id, Description, Correct, Question_Id) values
 (80, 'cabra', 0, 20);
 
 -- Question 21
-INSERT INTO Questions (Id, Description) values (21, ' Qual é o nome do metal que prejudica o poder do superman?');
+INSERT INTO Questions (Id, Description) values (21, 'Qual o nome do material que é a fraqueza do superman?');
 INSERT INTO Options (Id, Description, Correct, Question_Id) values
 (81, 'esmeralda', 0, 21),
 (82, 'kryptonita', 1, 21),
